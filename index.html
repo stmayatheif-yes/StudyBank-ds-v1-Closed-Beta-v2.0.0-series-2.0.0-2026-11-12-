@@ -674,15 +674,17 @@ function sendEmailReport() {
    2.0.0 第一階段：側邊欄控制邏輯
    ========================================== */
 function toggleSidebar() {
-  const btn = document.getElementById('menuToggle');
+  const mainBtn = document.getElementById('menuToggle'); // 外面的漢堡
+  const sideBtn = document.querySelector('.sidebar-toggle-btn'); // 裡面的叉叉
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('sidebarOverlay');
   
-  btn.classList.toggle('active');
+  mainBtn.classList.toggle('active');
+  sideBtn.classList.toggle('active'); // 👈 新增這行，讓裡面的按鈕也跟著變叉叉
   sidebar.classList.toggle('active');
   overlay.classList.toggle('active');
 }
-
+  
 function switchPage(page) {
   document.getElementById('navHome').classList.toggle('active', page === 'home');
   document.getElementById('navSettings').classList.toggle('active', page === 'settings');
