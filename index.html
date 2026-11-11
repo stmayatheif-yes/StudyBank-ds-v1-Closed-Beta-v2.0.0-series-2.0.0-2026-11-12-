@@ -9,22 +9,69 @@
 <meta property="og:description" content="收錄110-115學測歷屆試題。提供隨機刷題、依年度練習、錯題複習與深淺色模式切換功能。">
 
 <style>
-  :root { color-scheme: light dark; --bg: #f0f2f5; --fg: #1a1a1a; --card: #ffffff; --bd: #e0e0e0; --ok: #10b981; --no: #ef4444; --ac: #3b82f6; --ac-hover: #2563eb; --shadow: 0 4px 6px -1px rgba(0,0,0,0.1); --radius: 12px; --notice-bg: #eff6ff; --notice-bd: #bfdbfe; --notice-fg: #1e3a8a; }
-  @media(prefers-color-scheme: dark) { :root { --bg: #111827; --fg: #f3f4f6; --card: #1f2937; --bd: #374151; --ok: #34d399; --no: #f87171; --ac: #60a5fa; --ac-hover: #3b82f6; --shadow: 0 4px 6px -1px rgba(0,0,0,0.3); --notice-bg: #1e3a8a33; --notice-bd: #1e40af; --notice-fg: #bfdbfe; } }
-  html[data-theme="light"] { color-scheme: light; --bg: #f0f2f5; --fg: #1a1a1a; --card: #ffffff; --bd: #e0e0e0; --ok: #10b981; --no: #ef4444; --ac: #3b82f6; --ac-hover: #2563eb; --shadow: 0 4px 6px -1px rgba(0,0,0,0.1); --notice-bg: #eff6ff; --notice-bd: #bfdbfe; --notice-fg: #1e3a8a; }
-  html[data-theme="dark"] { color-scheme: dark; --bg: #111827; --fg: #f3f4f6; --card: #1f2937; --bd: #374151; --ok: #34d399; --no: #f87171; --ac: #60a5fa; --ac-hover: #3b82f6; --shadow: 0 4px 6px -1px rgba(0,0,0,0.3); --notice-bg: #1e3a8a33; --notice-bd: #1e40af; --notice-fg: #bfdbfe; }
+  /* 👇 2.0 核心變數：所有顏色與設定都從這裡來 👇 */
+  :root { 
+    color-scheme: light dark; 
+    --bg: #f0f2f5; 
+    --fg: #1a1a1a; 
+    --card: #ffffff; 
+    --bd: #e0e0e0; 
+    --ok: #10b981; 
+    --no: #ef4444; 
+    --ac: #3b82f6; 
+    --ac-hover: #2563eb; 
+    --shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
+    --radius: 12px; 
+    --notice-bg: #eff6ff; 
+    --notice-bd: #bfdbfe; 
+    --notice-fg: #1e3a8a; 
+    
+    /* 2.0 背景變數 */
+    --bg-type: gradient;
+    --bg-color-1: #f0f2f5;
+    --bg-color-2: #e2e8f0;
+    --bg-angle: 135deg;
+    /* 文字顏色變數 */
+    --text-color: #1a1a1a;
+  }
+
+  @media(prefers-color-scheme: dark) { 
+    :root { 
+      --bg: #111827; --fg: #f3f4f6; --card: #1f2937; --bd: #374151; --ok: #34d399; --no: #f87171; --ac: #60a5fa; --ac-hover: #3b82f6; --shadow: 0 4px 6px -1px rgba(0,0,0,0.3); --notice-bg: #1e3a8a33; --notice-bd: #1e40af; --notice-fg: #bfdbfe;
+      --bg-color-1: #111827; --bg-color-2: #1f2937; --text-color: #f3f4f6;
+    } 
+  }
+  html[data-theme="light"] { 
+    color-scheme: light; 
+    --bg: #f0f2f5; --fg: #1a1a1a; --card: #ffffff; --bd: #e0e0e0; --ok: #10b981; --no: #ef4444; --ac: #3b82f6; --ac-hover: #2563eb; --shadow: 0 4px 6px -1px rgba(0,0,0,0.1); --notice-bg: #eff6ff; --notice-bd: #bfdbfe; --notice-fg: #1e3a8a;
+    --bg-color-1: #f0f2f5; --bg-color-2: #e2e8f0; --text-color: #1a1a1a;
+  }
+  html[data-theme="dark"] { 
+    color-scheme: dark; 
+    --bg: #111827; --fg: #f3f4f6; --card: #1f2937; --bd: #374151; --ok: #34d399; --no: #f87171; --ac: #60a5fa; --ac-hover: #3b82f6; --shadow: 0 4px 6px -1px rgba(0,0,0,0.3); --notice-bg: #1e3a8a33; --notice-bd: #1e40af; --notice-fg: #bfdbfe;
+    --bg-color-1: #111827; --bg-color-2: #1f2937; --text-color: #f3f4f6;
+  }
   
   body { 
-  margin: 0; 
-  background: linear-gradient(135deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 80%, var(--ac)) 100%);
-  background-attachment: fixed;
-  color: var(--fg); 
-  font: 16px/1.6 system-ui, -apple-system, "Noto Sans TC", sans-serif; 
-  -webkit-font-smoothing: antialiased; 
-  transition: background 0.3s, color 0.3s; 
-}
+    margin: 0; 
+    /* 👇 這裡使用 2.0 的背景變數與文字變數 */
+    background: var(--bg-color-1);
+    background: linear-gradient(var(--bg-angle), var(--bg-color-1), var(--bg-color-2));
+    background-attachment: fixed;
+    color: var(--text-color); 
+    font: 16px/1.6 system-ui, -apple-system, "Noto Sans TC", sans-serif; 
+    -webkit-font-smoothing: antialiased; 
+    transition: background 0.3s, color 0.3s; 
+  }
+  
+  /* 覆蓋預設文字顏色，讓 2.0 設定生效 */
+  p, h1, h2, h3, h4, h5, h6, span, div, button, select, input { color: inherit; }
+  .go, .btn-next { color: #fff !important; }
+  .sidebar-item { color: var(--text-color); }
+  .sidebar-item.active, .sidebar-item:hover { color: var(--ac); }
+
   main { max-width: 640px; margin: 0 auto; padding: 20px; padding-top: 85px; }
-  .theme-toggle { position: fixed; top: 24px; right: 24px; z-index: 999; background: var(--card); border: 1px solid var(--bd); border-radius: 50%; width: 44px; height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow); font-size: 0.65rem; font-weight: 500; line-height: 1.1; color: var(--fg); padding: 0; margin: 0; transition: all 0.2s; }
+  .theme-toggle { position: fixed; top: 24px; right: 24px; z-index: 999; background: var(--card); border: 1px solid var(--bd); border-radius: 50%; width: 44px; height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow); font-size: 0.65rem; font-weight: 500; line-height: 1.1; color: var(--text-color); padding: 0; margin: 0; transition: all 0.2s; }
   .theme-toggle:hover { transform: translateY(-2px); border-color: var(--ac); color: var(--ac); }
   .card { background: var(--card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid var(--bd); transition: background 0.3s, border-color 0.3s, backdrop-filter 0.3s; }
   .sys-notice { background: var(--notice-bg); border: 1px solid var(--notice-bd); color: var(--notice-fg); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px; font-size: 0.95rem; box-shadow: var(--shadow); display: flex; gap: 12px; align-items: flex-start; white-space: pre-wrap; }
@@ -32,10 +79,10 @@
   .sys-notice-content { flex: 1; }
   .header-row { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
   .header-row h2 { margin: 0; font-size: 1.5rem; margin-right: 4px; }
-  .btn-icon { padding: 6px 10px; font-size: 0.85rem; border-radius: 6px; margin: 0; background: var(--bg); border-color: var(--bd); color: var(--fg); opacity: 0.8; display: flex; align-items: center; justify-content: center; transition: all 0.2s; cursor: pointer; gap: 6px; }
+  .btn-icon { padding: 6px 10px; font-size: 0.85rem; border-radius: 6px; margin: 0; background: var(--bg); border-color: var(--bd); color: var(--text-color); opacity: 0.8; display: flex; align-items: center; justify-content: center; transition: all 0.2s; cursor: pointer; gap: 6px; }
   .btn-icon:hover { opacity: 1; border-color: var(--ac); color: var(--ac); transform: translateY(-1px); }
   .btn-icon svg { width: 16px; height: 16px; stroke-width: 1.5; }
-  .search-btn-text { color: var(--fg); opacity: 0.6; }
+  .search-btn-text { color: var(--text-color); opacity: 0.6; }
   .btn-icon:hover .search-btn-text { opacity: 1; color: var(--ac); }
   .svg-icon { width: 18px !important; height: 18px !important; stroke-width: 2; flex-shrink: 0; }
   .svg-icon-lg { width: 24px !important; height: 24px !important; stroke-width: 1.5; flex-shrink: 0; }
@@ -63,35 +110,35 @@
   .history-desc { font-size: 0.9rem; line-height: 1.4; }
   
   .modal-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 24px; }
-  .btn-secondary { background: var(--bg); color: var(--fg); border: 1px solid var(--bd); font-weight: normal; padding: 12px; border-radius: 10px; cursor: pointer; transition: all 0.2s; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-secondary { background: var(--bg); color: var(--text-color); border: 1px solid var(--bd); font-weight: normal; padding: 12px; border-radius: 10px; cursor: pointer; transition: all 0.2s; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .btn-secondary:hover { background: color-mix(in srgb, var(--ac) 10%, var(--card)); border-color: var(--ac); }
   p { margin-top: 0; margin-bottom: 16px; white-space: pre-wrap; }
   
-  button, select, input { font: inherit; color: inherit; background: var(--card); border: 1px solid var(--bd); border-radius: 8px; padding: 10px 16px; margin: 4px 0; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  button, select, input { font: inherit; color: var(--text-color); background: var(--card); border: 1px solid var(--bd); border-radius: 8px; padding: 10px 16px; margin: 4px 0; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
   button:hover:not(:disabled), select:hover, input:focus { border-color: var(--ac); transform: translateY(-1px); }
   button:active:not(:disabled) { transform: translateY(1px); }
   button:disabled { opacity: 0.5; cursor: not-allowed; }
   input { cursor: text; transform: none !important; }
   select { appearance: none; padding-right: 32px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
   
-  .opt { display: block; width: 100%; text-align: left; padding: 16px; margin-bottom: 12px; border-radius: 10px; background: var(--bg); line-height: 1.5; letter-spacing: 0.5px; box-shadow: none; }
+  .opt { display: block; width: 100%; text-align: left; padding: 16px; margin-bottom: 12px; border-radius: 10px; background: var(--bg); line-height: 1.5; letter-spacing: 0.5px; box-shadow: none; color: var(--text-color); }
   .opt:hover:not(.ok):not(.no):not(:disabled) { background: color-mix(in srgb, var(--ac) 8%, var(--card)); border-color: var(--ac); }
   .opt:disabled { cursor: default; }
   .sel { border-color: var(--ac) !important; background: color-mix(in srgb, var(--ac) 15%, var(--card)) !important; outline: 2px solid var(--ac); outline-offset: -2px; }
-  .ok { border-color: var(--ok) !important; background: color-mix(in srgb, var(--ok) 15%, var(--card)) !important; color: var(--ok); }
-  .no { border-color: var(--no) !important; background: color-mix(in srgb, var(--no) 15%, var(--card)) !important; color: var(--no); }
+  .ok { border-color: var(--ok) !important; background: color-mix(in srgb, var(--ok) 15%, var(--card)) !important; color: var(--ok) !important; }
+  .no { border-color: var(--no) !important; background: color-mix(in srgb, var(--no) 15%, var(--card)) !important; color: var(--no) !important; }
   
-  .go { background: var(--ac); color: #fff; border: none; font-weight: bold; width: 100%; padding: 14px; margin-top: 12px; border-radius: 10px; box-shadow: 0 2px 4px color-mix(in srgb, var(--ac) 40%, transparent); display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .go { background: var(--ac); color: #fff !important; border: none; font-weight: bold; width: 100%; padding: 14px; margin-top: 12px; border-radius: 10px; box-shadow: 0 2px 4px color-mix(in srgb, var(--ac) 40%, transparent); display: flex; align-items: center; justify-content: center; gap: 8px; }
   .go:hover:not(:disabled) { background: var(--ac-hover); transform: translateY(-2px); box-shadow: 0 4px 8px color-mix(in srgb, var(--ac) 50%, transparent); }
-  .meta { color: var(--fg); opacity: 0.6; font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px dashed var(--bd); }
+  .meta { color: var(--text-color); opacity: 0.6; font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px dashed var(--bd); }
   .meta button { padding: 6px 12px; font-size: 0.85rem; margin: 0; display: inline-flex; align-items: center; justify-content: center; }
   .feedback { margin-top: 20px; padding: 16px; border-radius: 8px; background: var(--bg); border-left: 4px solid var(--ac); }
-  .btn-next { background: var(--ac); color: #fff; border: none; padding: 14px; width: 100%; font-weight: bold; border-radius: 10px; box-shadow: 0 2px 4px color-mix(in srgb, var(--ac) 40%, transparent); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-next { background: var(--ac); color: #fff !important; border: none; padding: 14px; width: 100%; font-weight: bold; border-radius: 10px; box-shadow: 0 2px 4px color-mix(in srgb, var(--ac) 40%, transparent); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .btn-next:hover { background: var(--ac-hover); transform: translateY(-2px); box-shadow: 0 4px 8px color-mix(in srgb, var(--ac) 50%, transparent); }
   .type-select-btn { display: flex; align-items: center; justify-content: center; width: 100%; padding: 16px; font-size: 1.1rem; font-weight: bold; margin-bottom: 12px; border: 2px solid var(--bd); background: var(--bg); cursor: pointer; border-radius: 10px; transition: 0.2s; gap: 8px; }
   .type-select-btn:hover { border-color: var(--ac); color: var(--ac); }
   .type-select-btn.selected { border-color: var(--ac); background: color-mix(in srgb, var(--ac) 15%, var(--card)); color: var(--ac); }
-  .search-result-item { display: block; width: 100%; text-align: left; background: var(--bg); border: 1px solid var(--bd); border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; font-size: 0.95rem; line-height: 1.5; box-shadow: none; }
+  .search-result-item { display: block; width: 100%; text-align: left; background: var(--bg); border: 1px solid var(--bd); border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; font-size: 0.95rem; line-height: 1.5; box-shadow: none; color: var(--text-color); }
   .search-result-item:hover { border-color: var(--ac); background: color-mix(in srgb, var(--ac) 8%, var(--card)); }
   .search-result-meta { font-size: 0.8rem; color: var(--ac); font-weight: bold; margin-bottom: 4px; display: block; }
   .highlight { color: #ef4444; font-weight: bold; }
@@ -118,7 +165,7 @@
 
   .marquee-header { display: flex; align-items: center; margin-bottom: 4px; z-index: 2; }
   .marquee-prefix { flex-shrink: 0; font-weight: 500; }
-  .marquee-hint { font-size: 0.75rem; color: var(--fg); opacity: 0.5; margin: 0 4px; flex-shrink: 0; }
+  .marquee-hint { font-size: 0.75rem; color: var(--notice-fg); opacity: 0.5; margin: 0 4px; flex-shrink: 0; }
   .marquee-content-wrapper { width: 100%; overflow: hidden; position: relative; }
   .marquee-content {
     display: inline-block;
@@ -139,14 +186,12 @@
   .announcement-title { font-size: 1rem; line-height: 1.6; white-space: pre-wrap; }
   
   /* 歷史公告按鈕 */
-  .history-link { display: block; text-align: center; margin-top: 16px; font-size: 0.9rem; color: var(--fg); opacity: 0.7; text-decoration: underline; cursor: pointer; transition: 0.2s; }
+  .history-link { display: block; text-align: center; margin-top: 16px; font-size: 0.9rem; color: var(--text-color); opacity: 0.7; text-decoration: underline; cursor: pointer; transition: 0.2s; }
   .history-link:hover { opacity: 1; color: var(--ac); }
 
   /* ==========================================
      2.0.0 第一階段：側邊選單與漢堡按鈕
      ========================================== */
-  
-  /* 漢堡按鈕 */
   .hamburger-btn {
     position: fixed;
     top: 24px;
@@ -172,7 +217,7 @@
     display: block;
     width: 18px;
     height: 2px;
-    background-color: var(--fg);
+    background-color: var(--text-color);
     border-radius: 2px;
     transition: all 0.6s ease-in-out;
   }
@@ -219,7 +264,7 @@
     padding: 16px 24px;
     font-size: 1.05rem;
     font-weight: 500;
-    color: var(--fg);
+    color: var(--text-color);
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
     display: flex;
@@ -241,7 +286,6 @@
      2.0.0 第二階段：設定頁專屬樣式
      ========================================== */
   
-  /* 輔助說明文字 */
   .helper-text {
     font-size: 0.8rem;
     font-style: italic;
@@ -252,11 +296,11 @@
     line-height: 1.4;
   }
 
-  /* 風格切換按鈕 */
-  .style-options {
+  .style-options, .color-options {
     display: flex;
     gap: 12px;
     margin-top: 12px;
+    flex-wrap: wrap;
   }
   .style-btn {
     flex: 1;
@@ -268,7 +312,8 @@
     cursor: pointer;
     font-weight: bold;
     transition: all 0.2s;
-    color: var(--fg);
+    color: var(--text-color);
+    min-width: 100px;
   }
   .style-btn:hover { border-color: var(--ac); }
   .style-btn.active {
@@ -276,31 +321,61 @@
     background: color-mix(in srgb, var(--ac) 15%, var(--card));
     color: var(--ac);
   }
+  
+  /* 預設主題包按鈕 */
+  .preset-btn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--bd);
+    background: var(--bg);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .preset-btn:hover { border-color: var(--ac); color: var(--ac); }
+
+  /* 即時預覽區 */
+  .preview-box {
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-top: 16px;
+    border: 1px solid var(--bd);
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 120px;
+    /* 預覽區的背景會由 JS 即時覆蓋 */
+  }
 
   /* ✨ 柔光玻璃 (Glassmorphism) 特效 */
-html[data-style="glass"] .card,
-html[data-style="glass"] .modal-content,
-html[data-style="glass"] .sidebar,
-html[data-style="glass"] .hamburger-btn,
-html[data-style="glass"] .theme-toggle {
-  background: rgba(255, 255, 255, 0.4) !important; /* 透度調低，讓背景透出來 */
-  backdrop-filter: blur(20px) saturate(180%) !important; /* 增加飽和度，讓色彩更鮮豔 */
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.6) !important; /* 邊緣高光 */
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), inset 0 0 0 1px rgba(255,255,255,0.2) !important; /* 內陰影製造厚度 */
-}
+  html[data-style="glass"] .card,
+  html[data-style="glass"] .modal-content,
+  html[data-style="glass"] .sidebar,
+  html[data-style="glass"] .hamburger-btn,
+  html[data-style="glass"] .theme-toggle,
+  html[data-style="glass"] .preview-box {
+    background: rgba(255, 255, 255, 0.4) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), inset 0 0 0 1px rgba(255,255,255,0.2) !important;
+  }
+  
+  html[data-theme="dark"][data-style="glass"] .card,
+  html[data-theme="dark"][data-style="glass"] .modal-content,
+  html[data-theme="dark"][data-style="glass"] .sidebar,
+  html[data-theme="dark"][data-style="glass"] .hamburger-btn,
+  html[data-theme="dark"][data-style="glass"] .theme-toggle,
+  html[data-theme="dark"][data-style="glass"] .preview-box {
+    background: rgba(31, 41, 55, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255,255,255,0.05) !important;
+  }
 
-html[data-theme="dark"][data-style="glass"] .card,
-html[data-theme="dark"][data-style="glass"] .modal-content,
-html[data-theme="dark"][data-style="glass"] .sidebar,
-html[data-theme="dark"][data-style="glass"] .hamburger-btn,
-html[data-theme="dark"][data-style="glass"] .theme-toggle {
-  background: rgba(31, 41, 55, 0.4) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255,255,255,0.05) !important;
-}
-
-  /* 毛玻璃模式下，按鈕也會微透，但保留原本的顏色(藍/綠) */
+  /* 毛玻璃模式下，按鈕也會微透，但保留原本的顏色 */
   html[data-style="glass"] .go,
   html[data-style="glass"] .btn-next {
     backdrop-filter: blur(4px);
@@ -310,6 +385,20 @@ html[data-theme="dark"][data-style="glass"] .theme-toggle {
   html[data-style="glass"] .btn-next:hover {
     background: var(--ac-hover) !important;
   }
+
+  /* 調色盤輸入框樣式 */
+  input[type="color"] {
+    padding: 0;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: transparent;
+  }
+  input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+  input[type="color"]::-webkit-color-swatch { border: 1px solid var(--bd); border-radius: 8px; }
+
 </style>
 </head>
 <body>
@@ -326,7 +415,6 @@ html[data-theme="dark"][data-style="glass"] .theme-toggle {
 
 <!-- 側邊欄 -->
 <div class="sidebar" id="sidebar">
-  <!-- 👇 裡面的按鈕 -->
   <div class="hamburger-btn sidebar-toggle-btn" onclick="toggleSidebar()">
     <span></span>
     <span></span>
@@ -344,6 +432,7 @@ html[data-theme="dark"][data-style="glass"] .theme-toggle {
 <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">深色<br>模式</button>
 <main id="app"></main>
 
+<!-- 各種彈窗保留原樣 -->
 <div id="versionModal" class="modal-overlay" onclick="closeVersionModal(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
     <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" class="svg-icon" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>版本內容</h3>
@@ -372,7 +461,7 @@ html[data-theme="dark"][data-style="glass"] .theme-toggle {
       <button onclick="searchQuestions()" style="margin: 0; background: var(--ac); color: #fff; border: none; flex-shrink: 0;">搜尋</button>
     </div>
     <div id="searchResultsContainer" style="margin-top: 20px;"></div>
-    <div class="modal-actions" style="margin-top: 24px;"><button class="go" style="background: var(--bd); color: var(--fg); box-shadow: none;" onclick="closeSearchModal()">關閉</button></div>
+    <div class="modal-actions" style="margin-top: 24px;"><button class="go" style="background: var(--bd); color: var(--text-color); box-shadow: none;" onclick="closeSearchModal()">關閉</button></div>
   </div>
 </div>
 
@@ -387,7 +476,7 @@ html[data-theme="dark"][data-style="glass"] .theme-toggle {
       <button class="btn-secondary" onclick="startTypePractice('shuffle')">打亂題號順序</button>
       <button class="btn-secondary" onclick="startTypePractice('sort')">按照年份題號</button>
     </div>
-    <div class="modal-actions" style="margin-top: 16px;"><button class="go" style="background: var(--bd); color: var(--fg); box-shadow: none;" onclick="closeTypeModal()">取消</button></div>
+    <div class="modal-actions" style="margin-top: 16px;"><button class="go" style="background: var(--bd); color: var(--text-color); box-shadow: none;" onclick="closeTypeModal()">取消</button></div>
   </div>
 </div>
 
@@ -395,12 +484,10 @@ html[data-theme="dark"][data-style="glass"] .theme-toggle {
   <div class="modal-content" onclick="event.stopPropagation()"></div>
 </div>
 
-<!-- 最新公告彈窗 -->
 <div id="announcementModal" class="modal-overlay" onclick="closeAnnouncementModal(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
     <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" class="svg-icon" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18"></path><path d="M21 11v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3"></path><path d="M7 11V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v4"></path><path d="M12 3v4"></path><path d="M12 16v4"></path></svg> 系統公告</h3>
     <div id="currentAnnouncementContent"></div>
-    
     <div class="modal-actions" style="margin-top: 16px;">
       <button class="go" onclick="closeAnnouncementModal()">關閉</button>
     </div>
@@ -408,7 +495,6 @@ html[data-theme="dark"][data-style="glass"] .theme-toggle {
   </div>
 </div>
 
-<!-- 歷史公告彈窗 -->
 <div id="historyAnnouncementModal" class="modal-overlay" onclick="closeAnnouncementModal(event)">
   <div class="modal-content" onclick="event.stopPropagation()" style="max-height: 80vh; overflow-y: auto;">
     <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" class="svg-icon" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3"></path><circle cx="12" cy="12" r="9"></circle></svg> 歷史公告</h3>
@@ -418,7 +504,7 @@ html[data-theme="dark"][data-style="glass"] .theme-toggle {
 </div>
 
 <script>
-// 📢 系統公告資料（未來只要在這裡加資料即可）
+// 📢 系統公告資料
 const ANNOUNCEMENTS = [
   { date: "11/11 17:30(最後修改時間：22:40)", title: "★預計11/12將更新至2.0.0版本！\n• 版本維護時間：08:00~16:00(視維護情況可能提前或延後完成維護。)\n• 更新內容：操作介面全面煥新與全新功能即將上線！\n  ▶新增切換頁面功能，新增頁面為「設置」頁面。可自定義操作介面風格，包括背景顏色、頁面風格、文字顏色等個人化功能！詳情可等待2.0.0更新完成後自行體驗。\n  ▶新增功能：問題回報功能，刷題系統或是題目遇到任何問題？點擊填寫Mail即可進行回報！\n• 版本維護期間網站可正常使用。有一定概率會暫時無法使用，敬請見諒。版本維護後重新刷新介面，即會自動升級至2.0.0版本。" },
   { date: "11/11 17:00", title: "1.10.5版本已更新完畢。\n• 更新內容：新增系統公告功能，可關注網頁的最新消息。" },
@@ -541,7 +627,7 @@ function updateThemeText(theme) { themeToggleBtn.innerHTML = theme === 'dark' ? 
 initTheme();
 
 // ==========================================
-// 2.0.0 Step 2-1：風格切換初始化
+// 2.0.0 外觀與顏色初始化邏輯
 // ==========================================
 function initStyle() {
   const savedStyle = localStorage.getItem('style') || 'solid';
@@ -549,6 +635,47 @@ function initStyle() {
 }
 initStyle();
 
+function initCustomColors() {
+  const savedBgType = localStorage.getItem('bg_type') || 'gradient';
+  const savedBg1 = localStorage.getItem('bg_color_1');
+  const savedBg2 = localStorage.getItem('bg_color_2');
+  const savedText = localStorage.getItem('text_color');
+  
+  if (savedBgType === 'solid') {
+    document.getElementById('btnBgSolid')?.classList.add('active');
+    document.getElementById('btnBgGradient')?.classList.remove('active');
+    document.getElementById('solidColorGroup').style.display = 'flex';
+    document.getElementById('gradientColorGroup').style.display = 'none';
+    if(savedBg1) {
+      document.documentElement.style.setProperty('--bg-color-1', savedBg1);
+      document.documentElement.style.setProperty('--bg-color-2', savedBg1);
+      document.getElementById('solidColorPicker').value = savedBg1;
+    }
+  } else {
+    document.getElementById('btnBgSolid')?.classList.remove('active');
+    document.getElementById('btnBgGradient')?.classList.add('active');
+    document.getElementById('solidColorGroup').style.display = 'none';
+    document.getElementById('gradientColorGroup').style.display = 'flex';
+    if(savedBg1) {
+      document.documentElement.style.setProperty('--bg-color-1', savedBg1);
+      document.getElementById('bgColor1').value = savedBg1;
+    }
+    if(savedBg2) {
+      document.documentElement.style.setProperty('--bg-color-2', savedBg2);
+      document.getElementById('bgColor2').value = savedBg2;
+    }
+  }
+  
+  if (savedText) {
+    document.documentElement.style.setProperty('--text-color', savedText);
+    document.getElementById('textColorPicker').value = savedText;
+  }
+}
+initCustomColors();
+
+// ==========================================
+// 2.0.0 頁面切換與設定頁
+// ==========================================
 const SYSTEM_NOTICE = "歡迎來到學測歷屆試題刷題題庫系統！\n目前收錄 110-115 學年度學測歷屆國文選擇題。\n祝大家考試順利，答題如有神！";
 const SYNC_URL="";
 let Q=[],list=[],i=0,picks=new Set(),done=false;
@@ -741,7 +868,7 @@ function showReport() {
     </div>
     <div class="modal-actions">
       <button class="go" style="background: var(--ok);" onclick="sendEmailReport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>寄送答題紀錄</button>
-      <button class="go" style="background: var(--bd); color: var(--fg); box-shadow: none;" onclick="closeReportModal(); home()">回首頁</button>
+      <button class="go" style="background: var(--bd); color: var(--text-color); box-shadow: none;" onclick="closeReportModal(); home()">回首頁</button>
     </div>`;
   document.getElementById('reportModal').classList.add('active');
 }
@@ -757,7 +884,7 @@ function sendEmailReport() {
 }
 
 /* ==========================================
-   2.0.0 第一階段：側邊欄控制邏輯
+   2.0.0 設定頁面邏輯
    ========================================== */
 function toggleSidebar() {
   const mainBtn = document.getElementById('menuToggle'); 
@@ -784,26 +911,105 @@ function switchPage(page) {
   }
 }
 
-/* ==========================================
-   2.0.0 Step 2-1：設定頁與風格切換
-   ========================================== */
 function setStyle(styleName) {
   document.documentElement.setAttribute('data-style', styleName);
   localStorage.setItem('style', styleName);
   
-  // 更新按鈕的 active 狀態
   document.querySelectorAll('.style-btn').forEach(btn => btn.classList.remove('active'));
   if (styleName === 'solid') document.getElementById('btnStyleSolid').classList.add('active');
   if (styleName === 'glass') document.getElementById('btnStyleGlass').classList.add('active');
 }
 
+function setBgType(type) {
+  localStorage.setItem('bg_type', type);
+  if (type === 'solid') {
+    document.getElementById('btnBgSolid').classList.add('active');
+    document.getElementById('btnBgGradient').classList.remove('active');
+    document.getElementById('solidColorGroup').style.display = 'flex';
+    document.getElementById('gradientColorGroup').style.display = 'none';
+    applySolidColor(document.getElementById('solidColorPicker').value);
+  } else {
+    document.getElementById('btnBgSolid').classList.remove('active');
+    document.getElementById('btnBgGradient').classList.add('active');
+    document.getElementById('solidColorGroup').style.display = 'none';
+    document.getElementById('gradientColorGroup').style.display = 'flex';
+    applyGradientColor(document.getElementById('bgColor1').value, document.getElementById('bgColor2').value);
+  }
+  updatePreview();
+}
+
+function applySolidColor(color) {
+  document.documentElement.style.setProperty('--bg-color-1', color);
+  document.documentElement.style.setProperty('--bg-color-2', color);
+  localStorage.setItem('bg_color_1', color);
+  localStorage.setItem('bg_color_2', color);
+  updatePreview();
+}
+
+function applyGradientColor(color1, color2) {
+  document.documentElement.style.setProperty('--bg-color-1', color1);
+  document.documentElement.style.setProperty('--bg-color-2', color2);
+  localStorage.setItem('bg_color_1', color1);
+  localStorage.setItem('bg_color_2', color2);
+  updatePreview();
+}
+
+function applyTextColor(color) {
+  document.documentElement.style.setProperty('--text-color', color);
+  localStorage.setItem('text_color', color);
+  updatePreview();
+}
+
+function setPreset(c1, c2) {
+  document.getElementById('bgColor1').value = c1;
+  document.getElementById('bgColor2').value = c2;
+  setBgType('gradient');
+  applyGradientColor(c1, c2);
+}
+
+function updatePreview() {
+  const preview = document.getElementById('previewBox');
+  if (preview) {
+    // 即時更新預覽區背景
+    const savedBgType = localStorage.getItem('bg_type') || 'gradient';
+    if (savedBgType === 'solid') {
+      preview.style.background = document.getElementById('solidColorPicker').value;
+    } else {
+      preview.style.background = `linear-gradient(135deg, ${document.getElementById('bgColor1').value}, ${document.getElementById('bgColor2').value})`;
+    }
+  }
+}
+
+function resetAppearance() {
+  if(!confirm('確定要將外觀重置為預設值嗎？')) return;
+  localStorage.removeItem('style');
+  localStorage.removeItem('bg_type');
+  localStorage.removeItem('bg_color_1');
+  localStorage.removeItem('bg_color_2');
+  localStorage.removeItem('text_color');
+  
+  // 重置 CSS 變數
+  document.documentElement.style.setProperty('--bg-color-1', '#f0f2f5');
+  document.documentElement.style.setProperty('--bg-color-2', '#e2e8f0');
+  document.documentElement.style.setProperty('--text-color', '#1a1a1a');
+  document.documentElement.setAttribute('data-style', 'solid');
+  
+  // 重新渲染設定頁
+  renderSettings();
+}
+
 function renderSettings() {
   const currentStyle = localStorage.getItem('style') || 'solid';
+  const currentBgType = localStorage.getItem('bg_type') || 'gradient';
+  const currentBg1 = localStorage.getItem('bg_color_1') || '#f0f2f5';
+  const currentBg2 = localStorage.getItem('bg_color_2') || '#e2e8f0';
+  const currentText = localStorage.getItem('text_color') || '#1a1a1a';
   
   A.innerHTML = `
     <div class="card">
       <div class="header-row">
         <h2>⚙️ 設定</h2>
+        <button class="btn-icon" style="margin-left: auto; color: var(--no); border-color: var(--no);" onclick="resetAppearance()">恢復預設</button>
       </div>
       
       <!-- 區塊一：風格切換 -->
@@ -819,21 +1025,70 @@ function renderSettings() {
       
       <hr style="border: none; border-top: 1px dashed var(--bd); margin: 32px 0;">
       
-      <!-- 佔位：未來的背景與文字顏色 -->
-      <div style="opacity: 0.5;">
-        <p style="font-weight: bold; font-size: 1.1rem; margin-bottom: 0;">🌅 背景顏色 (即將推出)</p>
+      <!-- 區塊二：背景顏色 -->
+      <div>
+        <p style="font-weight: bold; font-size: 1.1rem; margin-bottom: 0;">🌅 背景顏色</p>
         <span class="helper-text">設定網頁最底層的畫布。可選擇單一純色，或使用雙色漸層營造層次感。</span>
+        
+        <div class="style-options" style="margin-bottom: 16px;">
+          <button class="style-btn ${currentBgType === 'gradient' ? 'active' : ''}" id="btnBgGradient" onclick="setBgType('gradient')">漸層</button>
+          <button class="style-btn ${currentBgType === 'solid' ? 'active' : ''}" id="btnBgSolid" onclick="setBgType('solid')">純色</button>
+        </div>
+
+        <!-- 漸層選項 -->
+        <div id="gradientColorGroup" style="display: ${currentBgType === 'gradient' ? 'flex' : 'none'}; flex-direction: column; gap: 12px;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="preset-btn" onclick="setPreset('#f0f2f5', '#e2e8f0')">預設白</button>
+            <button class="preset-btn" onclick="setPreset('#ff9a9e', '#fecfef')">晨曦</button>
+            <button class="preset-btn" onclick="setPreset('#a18cd1', '#fbc2eb')">星空</button>
+            <button class="preset-btn" onclick="setPreset('#84fab0', '#8fd3f4')">森林</button>
+          </div>
+          <div class="color-options" style="margin-top: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+              <span style="font-size: 0.9rem;">起始色</span>
+              <input type="color" id="bgColor1" value="${currentBg1}" onchange="applyGradientColor(this.value, document.getElementById('bgColor2').value)">
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+              <span style="font-size: 0.9rem;">結束色</span>
+              <input type="color" id="bgColor2" value="${currentBg2}" onchange="applyGradientColor(document.getElementById('bgColor1').value, this.value)">
+            </div>
+          </div>
+        </div>
+
+        <!-- 純色選項 -->
+        <div id="solidColorGroup" style="display: ${currentBgType === 'solid' ? 'flex' : 'none'}; align-items: center; gap: 12px;">
+          <span style="font-size: 0.9rem;">選擇顏色</span>
+          <input type="color" id="solidColorPicker" value="${currentBg1}" onchange="applySolidColor(this.value)">
+        </div>
       </div>
 
       <hr style="border: none; border-top: 1px dashed var(--bd); margin: 32px 0;">
 
-      <div style="opacity: 0.5;">
-        <p style="font-weight: bold; font-size: 1.1rem; margin-bottom: 0;">🔤 文字顏色 (即將推出)</p>
+      <!-- 區塊三：文字顏色 -->
+      <div>
+        <p style="font-weight: bold; font-size: 1.1rem; margin-bottom: 0;">🔤 文字顏色</p>
         <span class="helper-text">更改全站文字顏色。建議選擇與背景對比明顯的顏色，以確保閱讀清晰。</span>
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px;">
+          <span style="font-size: 0.9rem;">選擇顏色</span>
+          <input type="color" id="textColorPicker" value="${currentText}" onchange="applyTextColor(this.value)">
+        </div>
+      </div>
+
+      <hr style="border: none; border-top: 1px dashed var(--bd); margin: 32px 0;">
+
+      <!-- 即時預覽區 -->
+      <div>
+        <p style="font-weight: bold; font-size: 1.1rem; margin-bottom: 0;">👁️ 即時預覽</p>
+        <span class="helper-text">調整時可在此確認實際效果。</span>
+        <div id="previewBox" class="preview-box" style="background: linear-gradient(135deg, ${currentBg1}, ${currentBg2});">
+          <p style="margin: 0; font-weight: bold; color: var(--text-color);">預覽文字</p>
+          <button class="go" style="width: auto; padding: 8px 16px; margin: 0;">按鈕</button>
+        </div>
       </div>
       
     </div>
   `;
+  updatePreview();
 }
 </script>
 </body>
