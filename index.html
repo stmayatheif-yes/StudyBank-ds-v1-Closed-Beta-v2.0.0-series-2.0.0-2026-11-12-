@@ -664,6 +664,7 @@ let sessionStats = { total: 0, correct: 0 };
 let currentSearchResults = []; 
 
 let isReviewingWrong = false; 
+let currentPage = 'home'; // 🌟 新增：記錄目前在哪個頁面
 
 const A=document.getElementById("app");
 const id=q=>q.y+"-"+q.n;
@@ -712,7 +713,7 @@ function searchQuestions() {
   });
   container.innerHTML = html;
 }
-function startFromSearch(index) { closeSearchModal(); list = [...currentSearchResults]; i = index; userAnswers = {}; sessionStats = { total: list.length, correct: 0 }; isReviewingWrong = false; show(); }
+function startFromSearch(index) { closeSearchModal(); list = [...currentSearchResults]; i = index; userAnswers = {}; sessionStats = { total: list.length, correct: 0 }; isReviewingWrong = false; currentPage = 'quiz'; show(); }
 
 function openTypeModal() { selectedType = null; document.getElementById('btnTypeSingle').classList.remove('selected'); document.getElementById('btnTypeMulti').classList.remove('selected'); document.getElementById('typeModal').classList.add('active'); }
 function closeTypeModal(e) { if (!e || e.target.classList.contains('modal-overlay') || e.target.tagName === 'BUTTON') document.getElementById('typeModal').classList.remove('active'); }
@@ -724,10 +725,11 @@ function startTypePractice(order) {
   if (!list.length) { alert("找不到該題型的題目！"); return; }
   if (order === 'shuffle') list.sort(() => Math.random() - 0.5); 
   else list.sort((a, b) => a.y !== b.y ? a.y - b.y : parseInt(a.n) - parseInt(b.n));
-  i = 0; userAnswers = {}; sessionStats = { total: list.length, correct: 0 }; isReviewingWrong = false; show();
+  i = 0; userAnswers = {}; sessionStats = { total: list.length, correct: 0 }; isReviewingWrong = false; currentPage = 'quiz'; show();
 }
 
 function home(){
+  currentPage = 'home'; // 🌟 標記目前在首頁
   const ys = [...new Set(Q.map(q=>q.y))].sort((a,b) => a - b);
   const s=S();
   let noticeHTML = "";
@@ -761,6 +763,7 @@ function home(){
 }
 
 function start(m,v){
+  currentPage = 'quiz'; // 🌟 標記目前在刷題
   const s=S();
   list=Q.filter(q=>m=="all"||(m=="y"&&q.y==v)||(m=="w"&&s.w[id(q)]));
   if(!list.length){alert("沒有題目");return}
@@ -772,6 +775,7 @@ function start(m,v){
 }
 
 function show(){
+  currentPage = 'quiz'; // 🌟 確保標記狀態
   const q=list[i];
   picks = new Set(userAnswers[id(q)] || []);
   done = userAnswers[id(q)] !== undefined;
@@ -837,6 +841,7 @@ function prev(){ if(i>0){ i--; show(); } }
 function next(){ i++; i<list.length?show():showReport(); }
 
 function showReport() {
+  currentPage = 'report'; // 🌟 標記狀態
   const rate = sessionStats.total > 0 ? Math.round((sessionStats.correct / sessionStats.total) * 100) : 0;
   document.querySelector('#reportModal .modal-content').innerHTML = `
     <h3 style="display: flex; align-items: center; gap: 8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon-lg"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>測驗結果</h3>
@@ -884,7 +889,12 @@ function switchPage(page) {
   toggleSidebar();
 
   if (page === 'home') {
-    home();
+    // 🌟 修正問題一：判斷剛剛是不是在刷題，如果是，就回到原本的題目，而不是回主頁
+    if (currentPage === 'quiz') {
+      show();
+    } else {
+      home();
+    }
   } else if (page === 'settings') {
     renderSettings(); 
   }
@@ -976,7 +986,7 @@ function resetAppearance() {
   // 2. 重新渲染設定頁面，把預設值塞回輸入框
   renderSettings();
   
-  // 3. 確保渲染完畢後，輸入框的值是正確的（解決調色盤變黑色的問題）
+  // 3. 確保渲染完畢後，輸入框的值是正確的
   setTimeout(() => {
     if(document.getElementById('textColorPicker')) document.getElementById('textColorPicker').value = textColor;
     if(document.getElementById('solidColorPicker')) document.getElementById('solidColorPicker').value = bg1;
@@ -1063,7 +1073,7 @@ function renderSettings() {
 
       <hr style="border: none; border-top: 1px dashed var(--bd); margin: 32px 0;">
 
-      <!-- 即時預覽區 -->
+      <!-- 即時預覽區 (保留) -->
       <div>
         <p style="font-weight: bold; font-size: 1.1rem; margin-bottom: 0;">👁️ 即時預覽</p>
         <span class="helper-text">調整時可在此確認實際效果。</span>
