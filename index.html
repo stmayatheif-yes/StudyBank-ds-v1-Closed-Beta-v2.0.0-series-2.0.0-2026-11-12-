@@ -270,26 +270,27 @@
   }
 
   /* ✨ 柔光玻璃 (Glassmorphism) 特效 */
-  html[data-style="glass"] .card,
-  html[data-style="glass"] .modal-content,
-  html[data-style="glass"] .sidebar,
-  html[data-style="glass"] .hamburger-btn,
-  html[data-style="glass"] .theme-toggle {
-    background: rgba(255, 255, 255, 0.65) !important;
-    backdrop-filter: blur(16px) !important;
-    -webkit-backdrop-filter: blur(16px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.4) !important;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.1) !important;
-  }
-  
-  html[data-theme="dark"][data-style="glass"] .card,
-  html[data-theme="dark"][data-style="glass"] .modal-content,
-  html[data-theme="dark"][data-style="glass"] .sidebar,
-  html[data-theme="dark"][data-style="glass"] .hamburger-btn,
-  html[data-theme="dark"][data-style="glass"] .theme-toggle {
-    background: rgba(31, 41, 55, 0.65) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  }
+html[data-style="glass"] .card,
+html[data-style="glass"] .modal-content,
+html[data-style="glass"] .sidebar,
+html[data-style="glass"] .hamburger-btn,
+html[data-style="glass"] .theme-toggle {
+  background: rgba(255, 255, 255, 0.4) !important; /* 透度調低，讓背景透出來 */
+  backdrop-filter: blur(20px) saturate(180%) !important; /* 增加飽和度，讓色彩更鮮豔 */
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important; /* 邊緣高光 */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), inset 0 0 0 1px rgba(255,255,255,0.2) !important; /* 內陰影製造厚度 */
+}
+
+html[data-theme="dark"][data-style="glass"] .card,
+html[data-theme="dark"][data-style="glass"] .modal-content,
+html[data-theme="dark"][data-style="glass"] .sidebar,
+html[data-theme="dark"][data-style="glass"] .hamburger-btn,
+html[data-theme="dark"][data-style="glass"] .theme-toggle {
+  background: rgba(31, 41, 55, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255,255,255,0.05) !important;
+}
 
   /* 毛玻璃模式下，按鈕也會微透，但保留原本的顏色(藍/綠) */
   html[data-style="glass"] .go,
