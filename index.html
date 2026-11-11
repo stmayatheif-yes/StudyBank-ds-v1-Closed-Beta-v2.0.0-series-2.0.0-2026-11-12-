@@ -9,7 +9,7 @@
 <meta property="og:description" content="收錄110-115學測歷屆試題。提供隨機刷題、依年度練習、錯題複習與深淺色模式切換功能。">
 
 <style>
-  /* 👇 2.0 核心變數：所有顏色與設定都從這裡來 👇 */
+  /* 👇 2.0 核心變數 */
   :root { 
     color-scheme: light dark; 
     --bg: #f0f2f5; 
@@ -26,12 +26,10 @@
     --notice-bd: #bfdbfe; 
     --notice-fg: #1e3a8a; 
     
-    /* 2.0 背景變數 */
     --bg-type: gradient;
     --bg-color-1: #f0f2f5;
     --bg-color-2: #e2e8f0;
     --bg-angle: 135deg;
-    /* 文字顏色變數 */
     --text-color: #1a1a1a;
   }
 
@@ -63,7 +61,6 @@
     transition: background 0.3s, color 0.3s; 
   }
   
-  /* 覆蓋預設文字顏色，讓 2.0 設定生效 */
   p, h1, h2, h3, h4, h5, h6, span, div, button, select, input { color: inherit; }
   .go, .btn-next { color: #fff !important; }
   .sidebar-item { color: var(--text-color); }
@@ -346,7 +343,6 @@
     justify-content: center;
     gap: 12px;
     min-height: 120px;
-    /* 預覽區的背景會由 JS 即時覆蓋 */
   }
 
   /* ✨ 柔光玻璃 (Glassmorphism) 特效 */
@@ -374,7 +370,7 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255,255,255,0.05) !important;
   }
 
-  /* 毛玻璃模式下，按鈕也會微透，但保留原本的顏色 */
+  /* 毛玻璃模式下，按鈕也會微透 */
   html[data-style="glass"] .go,
   html[data-style="glass"] .btn-next {
     backdrop-filter: blur(4px);
@@ -948,15 +944,28 @@ function setPreset(c1, c2) {
 
 function resetAppearance() {
   if(!confirm('確定要將外觀重置為預設值嗎？')) return;
+  
+  // 清除儲存的外觀設定
   localStorage.removeItem('style');
   localStorage.removeItem('bg_type');
   localStorage.removeItem('bg_color_1');
   localStorage.removeItem('bg_color_2');
   localStorage.removeItem('text_color');
   
-  document.documentElement.style.setProperty('--bg-color-1', '#f0f2f5');
-  document.documentElement.style.setProperty('--bg-color-2', '#e2e8f0');
-  document.documentElement.style.setProperty('--text-color', '#1a1a1a');
+  // 根據當下深淺模式，給予正確的預設背景與文字顏色
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 
+                       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  
+  if (currentTheme === 'dark') {
+    document.documentElement.style.setProperty('--bg-color-1', '#111827');
+    document.documentElement.style.setProperty('--bg-color-2', '#1f2937');
+    document.documentElement.style.setProperty('--text-color', '#f3f4f6');
+  } else {
+    document.documentElement.style.setProperty('--bg-color-1', '#f0f2f5');
+    document.documentElement.style.setProperty('--bg-color-2', '#e2e8f0');
+    document.documentElement.style.setProperty('--text-color', '#1a1a1a');
+  }
+  
   document.documentElement.setAttribute('data-style', 'solid');
   
   renderSettings();
