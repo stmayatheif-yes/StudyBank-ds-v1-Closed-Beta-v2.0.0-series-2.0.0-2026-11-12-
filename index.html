@@ -956,19 +956,33 @@ function resetAppearance() {
   const currentTheme = document.documentElement.getAttribute('data-theme') || 
                        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   
+  let bg1, bg2, textColor;
   if (currentTheme === 'dark') {
-    document.documentElement.style.setProperty('--bg-color-1', '#111827');
-    document.documentElement.style.setProperty('--bg-color-2', '#1f2937');
-    document.documentElement.style.setProperty('--text-color', '#f3f4f6');
+    bg1 = '#111827';
+    bg2 = '#1f2937';
+    textColor = '#f3f4f6';
   } else {
-    document.documentElement.style.setProperty('--bg-color-1', '#f0f2f5');
-    document.documentElement.style.setProperty('--bg-color-2', '#e2e8f0');
-    document.documentElement.style.setProperty('--text-color', '#1a1a1a');
+    bg1 = '#f0f2f5';
+    bg2 = '#e2e8f0';
+    textColor = '#1a1a1a';
   }
-  
+
+  // 1. 更新 CSS 變數
+  document.documentElement.style.setProperty('--bg-color-1', bg1);
+  document.documentElement.style.setProperty('--bg-color-2', bg2);
+  document.documentElement.style.setProperty('--text-color', textColor);
   document.documentElement.setAttribute('data-style', 'solid');
   
+  // 2. 重新渲染設定頁面，把預設值塞回輸入框
   renderSettings();
+  
+  // 3. 確保渲染完畢後，輸入框的值是正確的（解決調色盤變黑色的問題）
+  setTimeout(() => {
+    if(document.getElementById('textColorPicker')) document.getElementById('textColorPicker').value = textColor;
+    if(document.getElementById('solidColorPicker')) document.getElementById('solidColorPicker').value = bg1;
+    if(document.getElementById('bgColor1')) document.getElementById('bgColor1').value = bg1;
+    if(document.getElementById('bgColor2')) document.getElementById('bgColor2').value = bg2;
+  }, 0);
 }
 
 function renderSettings() {
