@@ -1073,7 +1073,7 @@ function renderSettings() {
 
       <hr style="border: none; border-top: 1px dashed var(--bd); margin: 32px 0;">
 
-      <!-- 即時預覽區 (保留) -->
+      <!-- 即時預覽區 -->
       <div>
         <p style="font-weight: bold; font-size: 1.1rem; margin-bottom: 0;">👁️ 即時預覽</p>
         <span class="helper-text">調整時可在此確認實際效果。</span>
@@ -1085,6 +1085,14 @@ function renderSettings() {
       
     </div>
   `;
+
+  // 🌟 修正問題二：強制在 DOM 渲染完畢後，重新把值塞入調色盤中
+  setTimeout(() => {
+    if(document.getElementById('bgColor1')) document.getElementById('bgColor1').value = currentBg1;
+    if(document.getElementById('bgColor2')) document.getElementById('bgColor2').value = currentBg2;
+    if(document.getElementById('solidColorPicker')) document.getElementById('solidColorPicker').value = currentBg1;
+    if(document.getElementById('textColorPicker')) document.getElementById('textColorPicker').value = currentText;
+  }, 10);
 }
 </script>
 </body>
