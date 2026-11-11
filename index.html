@@ -186,7 +186,14 @@
     transition: all 0.3s;
   }
   .sidebar-overlay.active { opacity: 1; visibility: visible; }
-
+  
+  /* 側邊欄內部的漢堡按鈕：固定在左上角，絕對覆蓋原本位置 */
+.sidebar-toggle-btn {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+}
+  
   /* 側邊欄本體 */
   .sidebar {
     position: fixed;
