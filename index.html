@@ -18,7 +18,7 @@
   main { max-width: 640px; margin: 0 auto; padding: 20px; padding-top: 85px; }
   .theme-toggle { position: fixed; top: 24px; right: 24px; z-index: 999; background: var(--card); border: 1px solid var(--bd); border-radius: 50%; width: 44px; height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow); font-size: 0.65rem; font-weight: 500; line-height: 1.1; color: var(--fg); padding: 0; margin: 0; transition: all 0.2s; }
   .theme-toggle:hover { transform: translateY(-2px); border-color: var(--ac); color: var(--ac); }
-  .card { background: var(--card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid var(--bd); transition: background 0.3s, border-color 0.3s; }
+  .card { background: var(--card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid var(--bd); transition: background 0.3s, border-color 0.3s, backdrop-filter 0.3s; }
   .sys-notice { background: var(--notice-bg); border: 1px solid var(--notice-bd); color: var(--notice-fg); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px; font-size: 0.95rem; box-shadow: var(--shadow); display: flex; gap: 12px; align-items: flex-start; white-space: pre-wrap; }
   .sys-notice-icon { font-size: 1.2rem; line-height: 1.2; }
   .sys-notice-content { flex: 1; }
@@ -34,7 +34,7 @@
   
   .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.2s; }
   .modal-overlay.active { opacity: 1; visibility: visible; }
-  .modal-content { background: var(--card); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow); max-width: 90%; width: 400px; transform: translateY(20px); transition: all 0.2s; border: 1px solid var(--bd); line-height: 1.8; position: relative; }
+  .modal-content { background: var(--card); padding: 24px; border-radius: var(--radius); box-shadow: var(--shadow); max-width: 90%; width: 400px; transform: translateY(20px); transition: all 0.2s; border: 1px solid var(--bd); line-height: 1.8; position: relative; transition: background 0.3s, border-color 0.3s, backdrop-filter 0.3s; }
   .modal-overlay.active .modal-content { transform: translateY(0); }
   .modal-content h3 { margin-top: 0; margin-bottom: 16px; font-size: 1.2rem; border-bottom: 1px solid var(--bd); padding-bottom: 10px; display: flex; align-items: center; gap: 8px; }
   
@@ -156,7 +156,7 @@
     gap: 5px;
     cursor: pointer;
     box-shadow: var(--shadow);
-    transition: transform 0.7s ease, border-color 0.2s;
+    transition: transform 0.7s ease, border-color 0.2s, background 0.3s, border 0.3s;
   }
   .hamburger-btn:hover { border-color: var(--ac); }
   
@@ -169,13 +169,11 @@
     transition: all 0.6s ease-in-out;
   }
 
-  /* 按下後：向右滾 90 度，變成叉叉 */
   .hamburger-btn.active { transform: rotate(90deg); }
   .hamburger-btn.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
   .hamburger-btn.active span:nth-child(2) { opacity: 0; }
   .hamburger-btn.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-  /* 側邊欄遮罩 */
   .sidebar-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -187,15 +185,13 @@
   }
   .sidebar-overlay.active { opacity: 1; visibility: visible; }
   
-  /* 側邊欄內部的漢堡按鈕 */
-.sidebar-toggle-btn {
-  position: absolute;
-  top: 24px;
-  left: 24px;
-  z-index: 1003; /* 確保它在側邊欄最上層 */
-}
+  .sidebar-toggle-btn {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    z-index: 1003;
+  }
   
-  /* 側邊欄本體 */
   .sidebar {
     position: fixed;
     top: 0; left: -250px;
@@ -204,14 +200,13 @@
     background: var(--card);
     z-index: 1002;
     box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-    transition: left 0.3s ease;
+    transition: left 0.3s ease, background 0.3s;
     padding-top: 80px;
     display: flex;
     flex-direction: column;
   }
   .sidebar.active { left: 0; }
 
-  /* 側邊欄選項 */
   .sidebar-item {
     padding: 16px 24px;
     font-size: 1.05rem;
@@ -232,6 +227,79 @@
     background: color-mix(in srgb, var(--ac) 12%, var(--card));
     color: var(--ac);
     border-left-color: var(--ac);
+  }
+
+  /* ==========================================
+     2.0.0 第二階段：設定頁專屬樣式
+     ========================================== */
+  
+  /* 輔助說明文字 */
+  .helper-text {
+    font-size: 0.8rem;
+    font-style: italic;
+    opacity: 0.6;
+    margin-top: 8px;
+    margin-bottom: 24px;
+    display: block;
+    line-height: 1.4;
+  }
+
+  /* 風格切換按鈕 */
+  .style-options {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .style-btn {
+    flex: 1;
+    padding: 16px;
+    text-align: center;
+    border: 2px solid var(--bd);
+    background: var(--bg);
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+    color: var(--fg);
+  }
+  .style-btn:hover { border-color: var(--ac); }
+  .style-btn.active {
+    border-color: var(--ac);
+    background: color-mix(in srgb, var(--ac) 15%, var(--card));
+    color: var(--ac);
+  }
+
+  /* ✨ 柔光玻璃 (Glassmorphism) 特效 */
+  html[data-style="glass"] .card,
+  html[data-style="glass"] .modal-content,
+  html[data-style="glass"] .sidebar,
+  html[data-style="glass"] .hamburger-btn,
+  html[data-style="glass"] .theme-toggle {
+    background: rgba(255, 255, 255, 0.65) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1) !important;
+  }
+  
+  html[data-theme="dark"][data-style="glass"] .card,
+  html[data-theme="dark"][data-style="glass"] .modal-content,
+  html[data-theme="dark"][data-style="glass"] .sidebar,
+  html[data-theme="dark"][data-style="glass"] .hamburger-btn,
+  html[data-theme="dark"][data-style="glass"] .theme-toggle {
+    background: rgba(31, 41, 55, 0.65) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* 毛玻璃模式下，按鈕也會微透，但保留原本的顏色(藍/綠) */
+  html[data-style="glass"] .go,
+  html[data-style="glass"] .btn-next {
+    backdrop-filter: blur(4px);
+    background: color-mix(in srgb, var(--ac) 80%, transparent) !important;
+  }
+  html[data-style="glass"] .go:hover,
+  html[data-style="glass"] .btn-next:hover {
+    background: var(--ac-hover) !important;
   }
 </style>
 </head>
@@ -385,7 +453,7 @@ function renderAnnouncements() {
   if (!ANNOUNCEMENTS.length) return;
   
   const latest = ANNOUNCEMENTS[0];
-const marqueeHTML = `
+  const marqueeHTML = `
   <div class="marquee-container" id="marqueeBar" onclick="openAnnouncementModal()">
     <div class="marquee-header">
       <span class="marquee-prefix">📢 系統公告</span>
@@ -462,6 +530,15 @@ function toggleTheme() {
 }
 function updateThemeText(theme) { themeToggleBtn.innerHTML = theme === 'dark' ? '淺色<br>模式' : '深色<br>模式'; }
 initTheme();
+
+// ==========================================
+// 2.0.0 Step 2-1：風格切換初始化
+// ==========================================
+function initStyle() {
+  const savedStyle = localStorage.getItem('style') || 'solid';
+  document.documentElement.setAttribute('data-style', savedStyle);
+}
+initStyle();
 
 const SYSTEM_NOTICE = "歡迎來到學測歷屆試題刷題題庫系統！\n目前收錄 110-115 學年度學測歷屆國文選擇題。\n祝大家考試順利，答題如有神！";
 const SYNC_URL="";
@@ -674,16 +751,13 @@ function sendEmailReport() {
    2.0.0 第一階段：側邊欄控制邏輯
    ========================================== */
 function toggleSidebar() {
-  const mainBtn = document.getElementById('menuToggle'); // 外面的漢堡
-  const sideBtn = document.querySelector('.sidebar-toggle-btn'); // 裡面的叉叉
+  const mainBtn = document.getElementById('menuToggle'); 
+  const sideBtn = document.querySelector('.sidebar-toggle-btn'); 
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('sidebarOverlay');
   
-  // 切換漢堡與叉叉的 active 狀態 (旋轉動畫)
   if (mainBtn) mainBtn.classList.toggle('active');
   if (sideBtn) sideBtn.classList.toggle('active'); 
-  
-  // 切換側邊欄與遮罩
   if (sidebar) sidebar.classList.toggle('active');
   if (overlay) overlay.classList.toggle('active');
 }
@@ -701,14 +775,54 @@ function switchPage(page) {
   }
 }
 
+/* ==========================================
+   2.0.0 Step 2-1：設定頁與風格切換
+   ========================================== */
+function setStyle(styleName) {
+  document.documentElement.setAttribute('data-style', styleName);
+  localStorage.setItem('style', styleName);
+  
+  // 更新按鈕的 active 狀態
+  document.querySelectorAll('.style-btn').forEach(btn => btn.classList.remove('active'));
+  if (styleName === 'solid') document.getElementById('btnStyleSolid').classList.add('active');
+  if (styleName === 'glass') document.getElementById('btnStyleGlass').classList.add('active');
+}
+
 function renderSettings() {
+  const currentStyle = localStorage.getItem('style') || 'solid';
+  
   A.innerHTML = `
     <div class="card">
       <div class="header-row">
         <h2>⚙️ 設定</h2>
       </div>
-      <p style="color: var(--fg); opacity: 0.6;">這裡未來會放置「風格切換」、「背景顏色」與「文字顏色」等個人化設定。</p>
-      <p style="color: var(--fg); opacity: 0.6;">以及問題回報系統也會放在這裡。</p>
+      
+      <!-- 區塊一：風格切換 -->
+      <div style="margin-top: 24px;">
+        <p style="font-weight: bold; font-size: 1.1rem; margin-bottom: 0;">🎨 風格切換</p>
+        <span class="helper-text">調整卡片與按鈕的底層材質。選擇「柔光玻璃」將透出下層的背景顏色。</span>
+        
+        <div class="style-options">
+          <button class="style-btn ${currentStyle === 'solid' ? 'active' : ''}" id="btnStyleSolid" onclick="setStyle('solid')">初始純色</button>
+          <button class="style-btn ${currentStyle === 'glass' ? 'active' : ''}" id="btnStyleGlass" onclick="setStyle('glass')">柔光玻璃</button>
+        </div>
+      </div>
+      
+      <hr style="border: none; border-top: 1px dashed var(--bd); margin: 32px 0;">
+      
+      <!-- 佔位：未來的背景與文字顏色 -->
+      <div style="opacity: 0.5;">
+        <p style="font-weight: bold; font-size: 1.1rem; margin-bottom: 0;">🌅 背景顏色 (即將推出)</p>
+        <span class="helper-text">設定網頁最底層的畫布。可選擇單一純色，或使用雙色漸層營造層次感。</span>
+      </div>
+
+      <hr style="border: none; border-top: 1px dashed var(--bd); margin: 32px 0;">
+
+      <div style="opacity: 0.5;">
+        <p style="font-weight: bold; font-size: 1.1rem; margin-bottom: 0;">🔤 文字顏色 (即將推出)</p>
+        <span class="helper-text">更改全站文字顏色。建議選擇與背景對比明顯的顏色，以確保閱讀清晰。</span>
+      </div>
+      
     </div>
   `;
 }
