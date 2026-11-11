@@ -96,57 +96,29 @@
     border: 1px solid var(--notice-bd);
     color: var(--notice-fg);
     border-radius: var(--radius);
-    padding: 12px 16px; /* 調整內距，讓上下不要太擠 */
+    padding: 12px 16px;
     margin-bottom: 20px;
     cursor: pointer;
     display: flex;
-    flex-direction: column; /* 👈 關鍵：改為垂直排列 */
+    flex-direction: column;
     box-shadow: var(--shadow);
     transition: border-color 0.2s;
     overflow: hidden;
-    font-size: 0.95rem; /* 控制整體文字大小 */
+    font-size: 0.95rem;
   }
   .marquee-container:hover { border-color: var(--ac); }
 
-  /* 第一行：固定不動的標題 */
-  .marquee-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 4px; /* 與第二行保持距離 */
-    z-index: 2;
-  }
-
-  .marquee-prefix {
-    flex-shrink: 0;
-    font-weight: 500;
-  }
-
-  .marquee-hint {
-    font-size: 0.75rem;
-    color: var(--fg);
-    opacity: 0.5;
-    margin: 0 4px;
-    flex-shrink: 0;
-  }
-
-  /* 第二行：滾動的內容容器 */
-  .marquee-content-wrapper {
-    width: 100%;
-    overflow: hidden;
-    position: relative;
-  }
-
-  /* 滾動的文字本體 */
+  .marquee-header { display: flex; align-items: center; margin-bottom: 4px; z-index: 2; }
+  .marquee-prefix { flex-shrink: 0; font-weight: 500; }
+  .marquee-hint { font-size: 0.75rem; color: var(--fg); opacity: 0.5; margin: 0 4px; flex-shrink: 0; }
+  .marquee-content-wrapper { width: 100%; overflow: hidden; position: relative; }
   .marquee-content {
     display: inline-block;
-    padding-left: 100%; /* 從最右邊開始 */
-    /* 👈 改成使用變數計算速度 */
+    padding-left: 100%;
     animation: scrollLeft var(--marquee-duration, 15s) linear infinite; 
     white-space: nowrap;
   }
-
   .marquee-container.paused .marquee-content { animation-play-state: paused; }
-
   @keyframes scrollLeft {
     0% { transform: translateX(0); }
     100% { transform: translateX(-100%); }
@@ -161,9 +133,121 @@
   /* 歷史公告按鈕 */
   .history-link { display: block; text-align: center; margin-top: 16px; font-size: 0.9rem; color: var(--fg); opacity: 0.7; text-decoration: underline; cursor: pointer; transition: 0.2s; }
   .history-link:hover { opacity: 1; color: var(--ac); }
+
+  /* ==========================================
+     2.0.0 第一階段：側邊選單與漢堡按鈕
+     ========================================== */
+  
+  /* 漢堡按鈕 */
+  .hamburger-btn {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    z-index: 1001;
+    width: 44px;
+    height: 44px;
+    background: var(--card);
+    border: 1px solid var(--bd);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: transform 0.4s ease, border-color 0.2s;
+  }
+  .hamburger-btn:hover { border-color: var(--ac); }
+  
+  .hamburger-btn span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background-color: var(--fg);
+    border-radius: 2px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  /* 按下後：向右滾 90 度，變成叉叉 */
+  .hamburger-btn.active { transform: rotate(90deg); }
+  .hamburger-btn.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger-btn.active span:nth-child(2) { opacity: 0; }
+  .hamburger-btn.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* 側邊欄遮罩 */
+  .sidebar-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+  }
+  .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+  /* 側邊欄本體 */
+  .sidebar {
+    position: fixed;
+    top: 0; left: -250px;
+    width: 250px;
+    height: 100vh;
+    background: var(--card);
+    z-index: 1002;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    transition: left 0.3s ease;
+    padding-top: 80px;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar.active { left: 0; }
+
+  /* 側邊欄選項 */
+  .sidebar-item {
+    padding: 16px 24px;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--fg);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-left: 4px solid transparent;
+  }
+  .sidebar-item:hover {
+    background: color-mix(in srgb, var(--ac) 8%, var(--card));
+    color: var(--ac);
+  }
+  .sidebar-item.active {
+    background: color-mix(in srgb, var(--ac) 12%, var(--card));
+    color: var(--ac);
+    border-left-color: var(--ac);
+  }
 </style>
 </head>
 <body>
+
+<!-- 漢堡按鈕 -->
+<div class="hamburger-btn" id="menuToggle" onclick="toggleSidebar()">
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+
+<!-- 側邊欄遮罩 -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- 側邊欄 -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-item active" id="navHome" onclick="switchPage('home')">
+    🏠 首頁
+  </div>
+  <div class="sidebar-item" id="navSettings" onclick="switchPage('settings')">
+    ⚙️ 設定
+  </div>
+</div>
 
 <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">深色<br>模式</button>
 <main id="app"></main>
@@ -225,11 +309,9 @@
     <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" class="svg-icon" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18"></path><path d="M21 11v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3"></path><path d="M7 11V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v4"></path><path d="M12 3v4"></path><path d="M12 16v4"></path></svg> 系統公告</h3>
     <div id="currentAnnouncementContent"></div>
     
-    <!-- 把關閉按鈕的 margin-top 縮小一點，讓它稍微往上 -->
     <div class="modal-actions" style="margin-top: 16px;">
       <button class="go" onclick="closeAnnouncementModal()">關閉</button>
     </div>
-      <!-- 把歷史公告移到下面置中 -->
   <a class="history-link" style="text-align: center; display: block; width: 100%; font-style: italic; text-decoration: underline;" onclick="switchModal('announcementModal', 'historyAnnouncementModal')">查看歷史公告 &gt;</a>
   </div>
 </div>
@@ -288,16 +370,13 @@ function renderAnnouncements() {
   if (!ANNOUNCEMENTS.length) return;
   
   const latest = ANNOUNCEMENTS[0];
-  // 把前綴跟滾動內容分開
 const marqueeHTML = `
   <div class="marquee-container" id="marqueeBar" onclick="openAnnouncementModal()">
-    <!-- 第一行：固定的標題 -->
     <div class="marquee-header">
       <span class="marquee-prefix">📢 系統公告</span>
       <span class="marquee-hint">[可點擊展開詳情]</span>
       <span class="marquee-prefix">：</span>
     </div>
-    <!-- 第二行：跑馬燈內容 -->
     <div class="marquee-content-wrapper">
       <div class="marquee-content" id="marqueeText">${latest.title}</div>
     </div>
@@ -310,15 +389,13 @@ const marqueeHTML = `
     document.querySelector('main').insertAdjacentHTML('afterbegin', marqueeHTML);
   }
 
-  // 👇 新增這段：動態計算定速時間 👇
   const marqueeEl = document.getElementById('marqueeText');
   if (marqueeEl) {
     const textWidth = marqueeEl.offsetWidth; 
-    const speed = 60; // 每秒跑 60 像素 (數字越大跑越快)
+    const speed = 60; 
     const duration = textWidth / speed;
     marqueeEl.style.setProperty('--marquee-duration', `${duration}s`);
   }
-  // 👆 新增結束 👆
 
   document.getElementById('currentAnnouncementContent').innerHTML = `
   <div class="announcement-item">
@@ -576,6 +653,44 @@ function sendEmailReport() {
   const subject = `【學測國文刷題】答題紀錄 - ${dateStr}`;
   const body = `這是一封來自「學測國文刷題系統」的答題紀錄。\n\n測驗時間：${dateStr}\n本次作答題數：${sessionStats.total} 題\n答對題數：${sessionStats.correct} 題\n正確率：${rate}%\n\n繼續加油！祝你考試順利！`;
   window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+/* ==========================================
+   2.0.0 第一階段：側邊欄控制邏輯
+   ========================================== */
+function toggleSidebar() {
+  const btn = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  
+  btn.classList.toggle('active');
+  sidebar.classList.toggle('active');
+  overlay.classList.toggle('active');
+}
+
+function switchPage(page) {
+  document.getElementById('navHome').classList.toggle('active', page === 'home');
+  document.getElementById('navSettings').classList.toggle('active', page === 'settings');
+  
+  toggleSidebar();
+
+  if (page === 'home') {
+    home();
+  } else if (page === 'settings') {
+    renderSettings(); 
+  }
+}
+
+function renderSettings() {
+  A.innerHTML = `
+    <div class="card">
+      <div class="header-row">
+        <h2>⚙️ 設定</h2>
+      </div>
+      <p style="color: var(--fg); opacity: 0.6;">這裡未來會放置「風格切換」、「背景顏色」與「文字顏色」等個人化設定。</p>
+      <p style="color: var(--fg); opacity: 0.6;">以及問題回報系統也會放在這裡。</p>
+    </div>
+  `;
 }
 </script>
 </body>
