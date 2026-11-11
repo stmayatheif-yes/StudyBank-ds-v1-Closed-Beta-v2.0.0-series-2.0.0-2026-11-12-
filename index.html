@@ -241,9 +241,14 @@
 
 <!-- 側邊欄 -->
 <div class="sidebar" id="sidebar">
-  <!-- 👇 新增這個關閉按鈕 -->
-  <div class="sidebar-close-btn" onclick="toggleSidebar()">✕</div>
   
+  <!-- 👇 直接套用漢堡按鈕的樣式，並預設為 active (叉叉狀態) -->
+  <div class="hamburger-btn active" id="sidebarCloseBtn" onclick="toggleSidebar()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
   <div class="sidebar-item active" id="navHome" onclick="switchPage('home')">
     🏠 首頁
   </div>
