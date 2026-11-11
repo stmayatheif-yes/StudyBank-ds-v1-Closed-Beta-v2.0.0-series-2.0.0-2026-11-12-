@@ -187,11 +187,12 @@
   }
   .sidebar-overlay.active { opacity: 1; visibility: visible; }
   
-  /* 側邊欄內部的漢堡按鈕：固定在左上角，絕對覆蓋原本位置 */
+  /* 側邊欄內部的漢堡按鈕 */
 .sidebar-toggle-btn {
   position: absolute;
   top: 24px;
   left: 24px;
+  z-index: 1003; /* 確保它在側邊欄最上層 */
 }
   
   /* 側邊欄本體 */
@@ -678,10 +679,13 @@ function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('sidebarOverlay');
   
-  mainBtn.classList.toggle('active');
-  sideBtn.classList.toggle('active'); // 👈 新增這行，讓裡面的按鈕也跟著變叉叉
-  sidebar.classList.toggle('active');
-  overlay.classList.toggle('active');
+  // 切換漢堡與叉叉的 active 狀態 (旋轉動畫)
+  if (mainBtn) mainBtn.classList.toggle('active');
+  if (sideBtn) sideBtn.classList.toggle('active'); 
+  
+  // 切換側邊欄與遮罩
+  if (sidebar) sidebar.classList.toggle('active');
+  if (overlay) overlay.classList.toggle('active');
 }
   
 function switchPage(page) {
