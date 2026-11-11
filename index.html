@@ -54,7 +54,6 @@
   
   body { 
     margin: 0; 
-    /* 👇 這裡使用 2.0 的背景變數與文字變數 */
     background: var(--bg-color-1);
     background: linear-gradient(var(--bg-angle), var(--bg-color-1), var(--bg-color-2));
     background-attachment: fixed;
@@ -642,33 +641,17 @@ function initCustomColors() {
   const savedText = localStorage.getItem('text_color');
   
   if (savedBgType === 'solid') {
-    document.getElementById('btnBgSolid')?.classList.add('active');
-    document.getElementById('btnBgGradient')?.classList.remove('active');
-    document.getElementById('solidColorGroup').style.display = 'flex';
-    document.getElementById('gradientColorGroup').style.display = 'none';
     if(savedBg1) {
       document.documentElement.style.setProperty('--bg-color-1', savedBg1);
       document.documentElement.style.setProperty('--bg-color-2', savedBg1);
-      document.getElementById('solidColorPicker').value = savedBg1;
     }
   } else {
-    document.getElementById('btnBgSolid')?.classList.remove('active');
-    document.getElementById('btnBgGradient')?.classList.add('active');
-    document.getElementById('solidColorGroup').style.display = 'none';
-    document.getElementById('gradientColorGroup').style.display = 'flex';
-    if(savedBg1) {
-      document.documentElement.style.setProperty('--bg-color-1', savedBg1);
-      document.getElementById('bgColor1').value = savedBg1;
-    }
-    if(savedBg2) {
-      document.documentElement.style.setProperty('--bg-color-2', savedBg2);
-      document.getElementById('bgColor2').value = savedBg2;
-    }
+    if(savedBg1) document.documentElement.style.setProperty('--bg-color-1', savedBg1);
+    if(savedBg2) document.documentElement.style.setProperty('--bg-color-2', savedBg2);
   }
   
   if (savedText) {
     document.documentElement.style.setProperty('--text-color', savedText);
-    document.getElementById('textColorPicker').value = savedText;
   }
 }
 initCustomColors();
@@ -935,7 +918,6 @@ function setBgType(type) {
     document.getElementById('gradientColorGroup').style.display = 'flex';
     applyGradientColor(document.getElementById('bgColor1').value, document.getElementById('bgColor2').value);
   }
-  updatePreview();
 }
 
 function applySolidColor(color) {
@@ -943,7 +925,6 @@ function applySolidColor(color) {
   document.documentElement.style.setProperty('--bg-color-2', color);
   localStorage.setItem('bg_color_1', color);
   localStorage.setItem('bg_color_2', color);
-  updatePreview();
 }
 
 function applyGradientColor(color1, color2) {
@@ -951,13 +932,11 @@ function applyGradientColor(color1, color2) {
   document.documentElement.style.setProperty('--bg-color-2', color2);
   localStorage.setItem('bg_color_1', color1);
   localStorage.setItem('bg_color_2', color2);
-  updatePreview();
 }
 
 function applyTextColor(color) {
   document.documentElement.style.setProperty('--text-color', color);
   localStorage.setItem('text_color', color);
-  updatePreview();
 }
 
 function setPreset(c1, c2) {
@@ -965,19 +944,6 @@ function setPreset(c1, c2) {
   document.getElementById('bgColor2').value = c2;
   setBgType('gradient');
   applyGradientColor(c1, c2);
-}
-
-function updatePreview() {
-  const preview = document.getElementById('previewBox');
-  if (preview) {
-    // 即時更新預覽區背景
-    const savedBgType = localStorage.getItem('bg_type') || 'gradient';
-    if (savedBgType === 'solid') {
-      preview.style.background = document.getElementById('solidColorPicker').value;
-    } else {
-      preview.style.background = `linear-gradient(135deg, ${document.getElementById('bgColor1').value}, ${document.getElementById('bgColor2').value})`;
-    }
-  }
 }
 
 function resetAppearance() {
@@ -988,13 +954,11 @@ function resetAppearance() {
   localStorage.removeItem('bg_color_2');
   localStorage.removeItem('text_color');
   
-  // 重置 CSS 變數
   document.documentElement.style.setProperty('--bg-color-1', '#f0f2f5');
   document.documentElement.style.setProperty('--bg-color-2', '#e2e8f0');
   document.documentElement.style.setProperty('--text-color', '#1a1a1a');
   document.documentElement.setAttribute('data-style', 'solid');
   
-  // 重新渲染設定頁
   renderSettings();
 }
 
@@ -1080,15 +1044,14 @@ function renderSettings() {
       <div>
         <p style="font-weight: bold; font-size: 1.1rem; margin-bottom: 0;">👁️ 即時預覽</p>
         <span class="helper-text">調整時可在此確認實際效果。</span>
-        <div id="previewBox" class="preview-box" style="background: linear-gradient(135deg, ${currentBg1}, ${currentBg2});">
-          <p style="margin: 0; font-weight: bold; color: var(--text-color);">預覽文字</p>
+        <div id="previewBox" class="preview-box" style="background: ${currentBgType === 'solid' ? currentBg1 : 'linear-gradient(135deg, ' + currentBg1 + ', ' + currentBg2 + ')'};">
+          <p style="margin: 0; font-weight: bold;">預覽文字</p>
           <button class="go" style="width: auto; padding: 8px 16px; margin: 0;">按鈕</button>
         </div>
       </div>
       
     </div>
   `;
-  updatePreview();
 }
 </script>
 </body>
