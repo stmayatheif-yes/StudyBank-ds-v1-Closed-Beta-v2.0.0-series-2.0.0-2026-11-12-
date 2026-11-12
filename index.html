@@ -318,22 +318,33 @@
   }
   
   /* 預設主題包按鈕 */
-  .preset-btn {
-    padding: 8px 16px;
-    border-radius: 20px;
-    border: 1px solid var(--bd);
-    background: var(--bg);
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  .preset-btn:hover { border-color: var(--ac); color: var(--ac); }
-  .preset-btn.active {
-    border-color: var(--ac);
-    background: color-mix(in srgb, var(--ac) 15%, var(--card));
-    color: var(--ac);
-  }
-  /* 自訂包與基礎色按鈕樣式 */
+.preset-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--bd);
+  background: var(--bg);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.preset-btn:hover { border-color: var(--ac); color: var(--ac); }
+.preset-btn.active {
+  border-color: var(--ac);
+  background: color-mix(in srgb, var(--ac) 15%, var(--card));
+  color: var(--ac);
+}
+
+/* 確保按鈕不被壓縮，且文字不換行 */
+.preset-btn, 
+.custom-add-btn {
+  flex-shrink: 0 !important;       /* 關鍵：不准瀏覽器擠壓它 */
+  white-space: nowrap !important;  /* 關鍵：文字絕對不換行 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 自訂包與基礎色按鈕樣式 */
 .preset-scroll-wrapper {
   display: flex;
   gap: 8px;
@@ -341,23 +352,24 @@
   padding-bottom: 8px;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch; /* 讓手機滑動更順 */
 }
 .preset-scroll-wrapper::-webkit-scrollbar { display: none; }
 
-  /* 包裹預設包的框底與編輯按鈕 */
+/* 包裹預設包的框底與編輯按鈕 */
 .preset-container {
   position: relative;
   border: 1px solid var(--bd);
   border-radius: 12px;
-  padding: 24px 12px 12px 12px; /* 上方留空間給編輯按鈕 */
+  padding: 28px 12px 12px 12px; /* 稍微增加上方空間，讓編輯按鈕不擁擠 */
   margin-top: 16px;
-  background: var(--bg); /* 稍微區分底色 */
+  background: var(--bg); 
 }
 
 .preset-edit-btn {
   position: absolute;
   top: 6px;
-  right: 12px;
+  right: 10px;
   font-size: 0.75rem;
   color: var(--ac);
   background: transparent;
@@ -370,9 +382,37 @@
   border-radius: 6px;
   transition: 0.2s;
   box-shadow: none;
+  z-index: 10;
 }
 .preset-edit-btn:hover {
   background: color-mix(in srgb, var(--ac) 10%, transparent);
+}
+
+/* 管理模式時，自訂包按鈕的容器 */
+.custom-preset-item {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* 刪除按鈕 (X) */
+.custom-preset-delete {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 18px;
+  height: 18px;
+  background: var(--no);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  cursor: pointer;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  border: 1px solid #fff;
 }
 
 /* 管理模式時，自訂包按鈕的容器 */
