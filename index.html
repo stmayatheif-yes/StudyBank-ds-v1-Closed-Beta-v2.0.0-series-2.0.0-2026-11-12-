@@ -1595,6 +1595,8 @@ function closeFeedbackModal(e) {
 
 // 綁定「前往填寫」按鈕的點擊事件
 function goToFeedbackMail() {
+  closeFeedbackModal(); // 先關閉原本的提示視窗
+
   let subject = "";
   let body = "";
   
@@ -1605,11 +1607,43 @@ function goToFeedbackMail() {
     subject = "問題反饋";
     body = "反饋項目：(題目文字錯誤/題目表格未顯示/題目未顯示完整等)\n\n反饋意見：\n\n期望成果：";
   }
-  
-  const encodedBody = encodeURIComponent(body).replace(/\n/g, '%0D%0A');
-  window.location.href = `https://mail.google.com/mail/?view=cm&fs=1&to=article2037@gmail.com&su=${encodeURIComponent(subject)}&body=${encodedBody}`;
-  
-  closeFeedbackModal();
+
+  // 產生 mailto 網址，這會直接呼叫手機或電腦的「郵件 App」
+  const mailtoUrl = `mailto:article2037@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+  // 把「測驗結果」的視窗樣式拿來用
+  document.querySelector('#reportModal .modal-content').innerHTML = `
+    <h3 style="display: flex; align-items: center; gap: 8px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon-lg"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+      準備跳轉至郵件 App
+    </h3>
+    <div style="text-align: center; margin: 30px 0;">
+      <p style="font-size: 1.05rem; line-height: 1.8; margin-bottom: 20px; color: var(--text-color); text-align: left;">
+        系統已為您自動填寫好主旨與格式。<br>
+        若沒有自動跳轉，請確認您的裝置已安裝郵件 App。
+      </p>
+      <div style="background: var(--bg); border: 1px dashed var(--bd); border-radius: 8px; padding: 16px; text-align: left; font-size: 0.9rem; margin-bottom: 20px;">
+        <strong>主旨：</strong>${subject}<br><br>
+        <strong>收件人：</strong>article2037@gmail.com
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="go" style="background: var(--ok);" onclick="window.location.href='${mailtoUrl}'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        確認並開啟郵件 App
+      </button>
+      
+      ${isMobile ? `
+      <button class="go" style="background: var(--ac);" onclick="window.location.href='https://mail.google.com/mail/?view=cm&fs=1&to=article2037@gmail.com&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}'">
+        或使用 Gmail 網頁版
+      </button>
+      ` : ''}
+      
+      <button class="go" style="background: var(--bd); color: var(--text-color); box-shadow: none;" onclick="closeReportModal()">取消</button>
+    </div>`;
+
+  document.getElementById('reportModal').classList.add('active');
 }
   
 </script>
