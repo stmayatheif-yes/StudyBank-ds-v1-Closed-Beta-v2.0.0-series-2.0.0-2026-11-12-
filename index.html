@@ -530,60 +530,36 @@
   input[type="color"]::-webkit-color-swatch { border: 1px solid var(--bd); border-radius: 8px; }
 
   /* ==========================================
-   優化手機端彈窗高度 (限制最大高度並允許滑動)
+   手機端彈窗優化 (最終版)
    ========================================== */
 @media (max-width: 768px) {
-  /* 1. 限制這四個彈窗的高度，並設定為 Flex 排版 */
+  /* 1. 限制這四個彈窗的整體高度 */
   #announcementModal .modal-content,
   #historyAnnouncementModal .modal-content,
   #versionModal .modal-content,
   #historyModal .modal-content {
-    max-height: 80vh !important; 
-    display: flex;               
-    flex-direction: column;      
+    max-height: 75vh !important; /* 限制最高佔螢幕 75% */
+    overflow-y: auto !important; /* 讓整個彈窗可以上下滑動 */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 2. 歷史版本一覽：手機端改成直向排列 */
+  .history-scroll-container {
+    display: block !important; /* 放棄 flex，改用 block 最穩 */
+    max-height: 40vh;          /* 給它一個固定的高度 */
+    overflow-y: auto !important; /* 超過高度就滑動 */
+    overflow-x: hidden !important;
+    padding: 10px 0 !important;
+    border-top: none !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 3. 歷史卡片：改成佔滿寬度 */
+  .history-item-horizontal {
+    width: 100% !important;
+    margin-bottom: 12px;
     box-sizing: border-box;
-    overflow: hidden; /* 避免外層也跟著滑動 */
   }
-
-  /* 2. 公告與版本文字的捲動區塊 */
-  #currentAnnouncementContent,
-  #historyAnnouncementContent,
-  #currentVersionContent {
-    overflow-y: auto;            
-    flex: 1;                     
-    -webkit-overflow-scrolling: touch; 
-  }
-
-  /* 3. 歷史版本區塊：在手機端改成「直向排列」且可上下滑動 */
-details.version-group {
-  display: flex;
-  flex-direction: column;
-  min-height: 0; /* 解決 flex 子元素無法收縮的問題 */
-  flex: 1;
-  margin-bottom: 0; /* 拿掉多餘的邊距 */
-}
-
-/* 確保 summary 不會被壓縮 */
-details.version-group summary {
-  flex-shrink: 0;
-}
-
-.history-scroll-container {
-  flex-direction: column !important; /* 改成直向 */
-  overflow-x: hidden !important;     /* 隱藏橫向滑動 */
-  overflow-y: auto !important;       /* 開啟上下滑動 */
-  flex: 1;                           /* 佔滿剩餘空間 */
-  min-height: 0;                     /* 關鍵：讓它可以正確計算剩餘高度並產生滾動條 */
-  padding: 16px !important;
-  border-top: none !important;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* 讓歷史版本的卡片在手機端變為全寬 */
-.history-item-horizontal {
-  flex: 0 0 auto !important;
-  width: 100% !important;
-  margin-bottom: 12px;
 }
 
 </style>
