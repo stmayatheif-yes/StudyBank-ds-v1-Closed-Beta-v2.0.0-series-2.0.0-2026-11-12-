@@ -1703,6 +1703,125 @@ function goToFeedbackMail() {
 
   document.getElementById('reportModal').classList.add('active');
 }
+
+  // ==========================================
+// 隨機出題數量選擇邏輯
+// ==========================================
+function openRandomModal() {
+  const maxQuestions = Q.length;
+  const input = document.getElementById('randomCountInput');
+  input.value = Math.min(20, maxQuestions); // 預設 20，若題庫不足則顯示最大值
+  
+  // 隱藏快捷選單
+  document.getElementById('countQuickOptions').classList.remove('active');
+  document.getElementById('randomCountModal').classList.add('active');
+}
+
+function closeRandomModal(e) {
+  if (!e || e.target.classList.contains('modal-overlay') || e.target.tagName === 'BUTTON') {
+    document.getElementById('randomCountModal').classList.remove('active');
+  }
+}
+
+function toggleCountOptions() {
+  document.getElementById('countQuickOptions').classList.toggle('active');
+}
+
+function setRandomCount(num) {
+  document.getElementById('randomCountInput').value = num;
+  document.getElementById('countQuickOptions').classList.remove('active'); // 選完自動收起
+}
+
+// 限制只能輸入數字
+document.getElementById('randomCountInput').addEventListener('input', function(e) {
+  this.value = this.value.replace(/[^0-9]/g, ''); // 把非數字字元全部替換掉
+});
+
+function confirmRandomStart() {
+  const input = document.getElementById('randomCountInput');
+  const maxQuestions = Q.length;
+  let count = parseInt(input.value, 10);
+
+  // 1. 如果小於 1 (包含 NaN、0、負數)
+  if (isNaN(count) || count < 1) {
+    input.value = 0;
+    return; // 留在彈窗，不進入測驗
+  }
+
+  // 2. 如果超過最大值
+  if (count > maxQuestions) {
+    input.value = maxQuestions;
+    return; // 留在彈窗，使用者必須再按一次確認
+  }
+
+  // 3. 正常範圍，關閉彈窗並開始抽題
+  closeRandomModal();
+  startCustomRandom(count);
+}
+
+// ==========================================
+// 自訂數量隨機抽題核心（保留題組完整連續出題）
+// ==========================================
+function startCustomRandom(targetCount) {
+  currentPage = 'quiz';
+  
+  // 1. 取得所有題目並打亂
+  let allQuestions = Q.filter(q => true); // 複製陣列
+  allQuestions.sort(() => Math.random() - 0.5); 
+
+  let finalList = [];
+  let processedIds = new Set();
+  let count = 0;
+
+  // 2. 開始遍歷打亂後的題目
+  for (let q of allQuestions) {
+    if (count >= targetCount) break; // 滿額就跳出迴圈
+    if (processedIds.has(id(q))) continue; // 已經被拉進題組的跳過
+
+    const groupMatch = q.q.match(/【(\d+)~(\d+)題為題組題】/);
+    
+    if (groupMatch) {
+      const startN = parseInt(groupMatch[1]);
+      const endN = parseInt(groupMatch[2]);
+      const groupSize = endN - startN + 1;
+
+      // 👉 關鍵：如果剩餘需要的題數「不足以塞下整個題組」，就跳過這個題組
+      if (count + groupSize > targetCount) {
+        continue; 
+      }
+
+      // 把整個題組拉出來並依照題號排序
+      let groupQs = Q.filter(item => 
+        item.y === q.y && 
+        parseInt(item.n) >= startN && 
+        parseInt(item.n) <= endN
+      ).sort((a,b) => parseInt(a.n) - parseInt(b.n));
+
+      // 加入最終陣列，並標記為已處理
+      groupQs.forEach(gq => {
+        finalList.push(gq);
+        processedIds.add(id(gq));
+      });
+      count += groupSize;
+
+    } else {
+      // 獨立題目
+      if (processedIds.has(id(q))) continue;
+      finalList.push(q);
+      processedIds.add(id(q));
+      count++;
+    }
+  }
+
+  // 3. 如果全部題目加起來都不夠（極端情況），就直接用 finalList
+  list = finalList;
+  
+  i = 0; 
+  userAnswers = {}; 
+  sessionStats = { total: list.length, correct: 0 };
+  isReviewingWrong = false; 
+  show();
+}
   
 </script>
 
