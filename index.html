@@ -548,6 +548,32 @@
   color: var(--ac);
 }
 
+  /* ==========================================
+   優化手機端彈窗高度 (限制最大高度並允許滑動)
+   ========================================== */
+@media (max-width: 768px) {
+  /* 限制這四個彈窗的內容區塊最大高度 */
+  #announcementModal .modal-content,
+  #historyAnnouncementModal .modal-content,
+  #versionModal .modal-content,
+  #historyModal .modal-content {
+    max-height: 80vh !important; /* 最高佔螢幕高度的 80% */
+    display: flex;               /* 使用 Flex 排版 */
+    flex-direction: column;      /* 讓標題固定在上方，內容在下方 */
+    box-sizing: border-box;
+  }
+
+  /* 讓內容區域可以獨立滑動 */
+  #currentAnnouncementContent,
+  #historyAnnouncementContent,
+  #currentVersionContent,
+  #historyList1 {
+    overflow-y: auto;            /* 內容過多時顯示垂直捲軸 */
+    flex: 1;                     /* 佔滿剩餘空間 */
+    -webkit-overflow-scrolling: touch; /* 讓 iOS 滑動有慣性效果 */
+  }
+}
+
 </style>
 </head>
 <body>
