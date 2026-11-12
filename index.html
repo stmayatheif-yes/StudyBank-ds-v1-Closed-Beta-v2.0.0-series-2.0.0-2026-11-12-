@@ -548,6 +548,64 @@
   color: var(--ac);
 }
 
+  /* ==========================================
+   隨機出題數量選擇器
+   ========================================== */
+.count-input-wrapper {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.count-input-wrapper input {
+  flex: 1;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+  padding: 12px;
+}
+.count-dropdown-btn {
+  background: var(--bg);
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  padding: 0 16px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: 0.2s;
+  margin: 0;
+}
+.count-dropdown-btn:hover {
+  border-color: var(--ac);
+  color: var(--ac);
+}
+.count-quick-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+  display: none; /* 預設隱藏，點擊下拉才展開 */
+}
+.count-quick-options.active {
+  display: flex;
+}
+.count-quick-btn {
+  flex: 1;
+  min-width: 60px;
+  padding: 10px 0;
+  text-align: center;
+  background: var(--bg);
+  border: 1px solid var(--bd);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+  margin: 0;
+}
+.count-quick-btn:hover {
+  border-color: var(--ac);
+  color: var(--ac);
+  background: color-mix(in srgb, var(--ac) 8%, var(--card));
+}
+  
 </style>
 </head>
 <body>
