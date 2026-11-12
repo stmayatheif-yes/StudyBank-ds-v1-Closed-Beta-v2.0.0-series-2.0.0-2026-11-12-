@@ -512,7 +512,19 @@
     <div class="modal-actions" style="margin-top: 16px;"><button class="go" style="background: var(--bd); color: var(--text-color); box-shadow: none;" onclick="closeTypeModal()">取消</button></div>
   </div>
 </div>
-
+<!-- 自訂包輸入視窗 -->
+<div id="customPresetModal" class="modal-overlay" onclick="closeCustomModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h3>自訂顏色設定</h3>
+    <p style="font-size: 0.9rem; opacity: 0.6; margin-bottom: 16px;">請輸入這組顏色的名稱與描述（選填）。</p>
+    <input type="text" id="customNameInput" placeholder="名稱（若空白則為自定義1）" style="width: 100%; box-sizing: border-box; margin-bottom: 12px;">
+    <input type="text" id="customDescInput" placeholder="描述（選填）" style="width: 100%; box-sizing: border-box; margin-bottom: 24px;">
+    <div class="modal-actions" style="margin-top: 0;">
+      <button class="go" onclick="saveCustomPreset()">儲存</button>
+      <button class="go" style="background: var(--bd); color: var(--text-color); box-shadow: none;" onclick="closeCustomModal()">取消</button>
+    </div>
+  </div>
+</div>
 <div id="reportModal" class="modal-overlay" onclick="closeReportModal(event)">
   <div class="modal-content" onclick="event.stopPropagation()"></div>
 </div>
