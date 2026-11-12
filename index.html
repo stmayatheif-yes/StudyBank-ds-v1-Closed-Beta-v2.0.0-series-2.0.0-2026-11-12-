@@ -530,47 +530,47 @@
   input[type="color"]::-webkit-color-swatch { border: 1px solid var(--bd); border-radius: 8px; }
 
   /* ==========================================
-   問題回報系統 (Feedback System)
-   ========================================== */
-.feedback-link {
-  display: block;
-  text-align: right;
-  font-size: 0.8rem;
-  color: var(--fg);
-  opacity: 0.5; /* 深灰靠近黑，使用透明度讓它在深淺色模式都適合 */
-  text-decoration: underline;
-  cursor: pointer;
-  margin-top: 16px;
-  transition: all 0.2s;
-}
-.feedback-link:hover {
-  opacity: 1;
-  color: var(--ac);
-}
-
-  /* ==========================================
    優化手機端彈窗高度 (限制最大高度並允許滑動)
    ========================================== */
 @media (max-width: 768px) {
-  /* 限制這四個彈窗的內容區塊最大高度 */
+  /* 1. 限制這四個彈窗的高度，並設定為 Flex 排版 */
   #announcementModal .modal-content,
   #historyAnnouncementModal .modal-content,
   #versionModal .modal-content,
   #historyModal .modal-content {
-    max-height: 80vh !important; /* 最高佔螢幕高度的 80% */
-    display: flex;               /* 使用 Flex 排版 */
-    flex-direction: column;      /* 讓標題固定在上方，內容在下方 */
+    max-height: 80vh !important; 
+    display: flex;               
+    flex-direction: column;      
     box-sizing: border-box;
+    overflow: hidden; /* 避免外層也跟著滑動 */
   }
 
-  /* 讓內容區域可以獨立滑動 */
+  /* 2. 公告與版本文字的捲動區塊 */
   #currentAnnouncementContent,
   #historyAnnouncementContent,
-  #currentVersionContent,
-  #historyList1 {
-    overflow-y: auto;            /* 內容過多時顯示垂直捲軸 */
-    flex: 1;                     /* 佔滿剩餘空間 */
-    -webkit-overflow-scrolling: touch; /* 讓 iOS 滑動有慣性效果 */
+  #currentVersionContent {
+    overflow-y: auto;            
+    flex: 1;                     
+    -webkit-overflow-scrolling: touch; 
+  }
+
+  /* 3. 歷史版本區塊：在手機端改成「直向排列」且可上下滑動 */
+  .history-scroll-container {
+    flex-direction: column !important; /* 改成直向 */
+    overflow-x: hidden !important;     /* 隱藏橫向滑動 */
+    overflow-y: auto !important;       /* 開啟上下滑動 */
+    flex: 1;
+    max-height: none;                  /* 交由外層 Flex 控制 */
+    padding: 16px !important;
+    border-top: none !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 讓歷史版本的卡片在手機端變為全寬，比較好閱讀 */
+  .history-item-horizontal {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    margin-bottom: 12px;
   }
 }
 
