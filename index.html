@@ -326,6 +326,7 @@
     font-size: 0.85rem;
     cursor: pointer;
     transition: 0.2s;
+    position: relative;
   }
   .preset-btn:hover { border-color: var(--ac); color: var(--ac); }
   .preset-btn.active {
@@ -333,6 +334,13 @@
     background: color-mix(in srgb, var(--ac) 15%, var(--card));
     color: var(--ac);
   }
+  .preset-btn .delete-btn {
+    position: absolute; top: -6px; right: -6px; width: 20px; height: 20px;
+    background: var(--no); color: white; border-radius: 50%; font-size: 12px;
+    display: none; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: none; padding: 0;
+  }
+  .preset-btn.editing .delete-btn { display: flex; }
 
   /* 即時預覽區 */
   .preview-box {
