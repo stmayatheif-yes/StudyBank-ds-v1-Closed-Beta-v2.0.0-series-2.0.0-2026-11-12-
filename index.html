@@ -1574,6 +1574,23 @@ function getContrastColor(hexColor) {
   const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
   return (yiq >= 128) ? '#000000' : '#ffffff';
 }
+
+  <!-- 問題回報彈出視窗 -->
+<div id="feedbackModal" class="modal-overlay" onclick="closeFeedbackModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()" style="text-align: center;">
+    <h3 style="justify-content: center;">問題回報</h3>
+    <p style="font-size: 1.05rem; line-height: 1.8; margin-bottom: 24px; text-align: left;">
+      將跳轉至 Gmail 頁面。<br>
+      填寫完成後，請寄至 <strong>article2037@gmail.com</strong> 信箱。<br><br>
+      您的意見是我們的最大動力！
+    </p>
+    <div class="modal-actions" style="margin-top: 0;">
+      <button class="go" id="feedbackActionBtn">前往填寫</button>
+      <button class="go" style="background: var(--bd); color: var(--fg); box-shadow: none;" onclick="closeFeedbackModal()">取消</button>
+    </div>
+  </div>
+</div>
+  
 </script>
 </body>
 </html>
