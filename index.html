@@ -1221,6 +1221,7 @@ function renderSettings() {
     <button class="preset-btn ${currentPreset === '晨曦' ? 'active' : ''}" onclick="setPreset('晨曦', '#ff9a9e', '#fecfef')">晨曦</button>
     <button class="preset-btn ${currentPreset === '星空' ? 'active' : ''}" onclick="setPreset('星空', '#a18cd1', '#fbc2eb')">星空</button>
     <button class="preset-btn ${currentPreset === '森林' ? 'active' : ''}" onclick="setPreset('森林', '#84fab0', '#8fd3f4')">森林</button>
+    ${renderCustomPresets('gradient')}
     <button class="custom-add-btn" onclick="openCustomModal('gradient')">＋ 自訂</button>
   </div>
           <div class="color-options" style="margin-top: 8px;">
@@ -1246,7 +1247,8 @@ function renderSettings() {
     <div class="solid-color-dot" style="background: #10b981;" onclick="applySolidColor('#10b981')"></div>
     <div class="solid-color-dot" style="background: #f59e0b;" onclick="applySolidColor('#f59e0b')"></div>
     <div class="solid-color-dot" style="background: #8b5cf6;" onclick="applySolidColor('#8b5cf6')"></div>
-    
+
+    ${renderCustomPresets('solid')}
     <button class="custom-add-btn" onclick="openCustomModal('solid')" style="flex-shrink: 0;">＋ 自訂</button>
   </div>
 </div>
