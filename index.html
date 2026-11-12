@@ -1594,7 +1594,7 @@ function closeFeedbackModal(e) {
 }
 
 // 綁定「前往填寫」按鈕的點擊事件
-document.getElementById('feedbackActionBtn').addEventListener('click', () => {
+function goToFeedbackMail() {
   let subject = "";
   let body = "";
   
@@ -1606,14 +1606,11 @@ document.getElementById('feedbackActionBtn').addEventListener('click', () => {
     body = "反饋項目：(題目文字錯誤/題目表格未顯示/題目未顯示完整等)\n\n反饋意見：\n\n期望成果：";
   }
   
-  // 將換行轉為 URL 編碼 (%0D%0A 代表換行)，確保 Gmail 打開時有換行
   const encodedBody = encodeURIComponent(body).replace(/\n/g, '%0D%0A');
-  
-  // 跳轉至 Gmail 撰寫視窗
   window.location.href = `https://mail.google.com/mail/?view=cm&fs=1&to=article2037@gmail.com&su=${encodeURIComponent(subject)}&body=${encodedBody}`;
   
   closeFeedbackModal();
-});
+}
   
 </script>
 
