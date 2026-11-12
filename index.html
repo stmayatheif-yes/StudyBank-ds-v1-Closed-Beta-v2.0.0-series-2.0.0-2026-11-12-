@@ -9,7 +9,6 @@
 <meta property="og:description" content="收錄110-115學測歷屆試題。提供隨機刷題、依年度練習、錯題複習與深淺色模式切換功能。">
 
 <style>
-  /* 👇 2.0 核心變數 */
   :root { 
     color-scheme: light dark; 
     --bg: #f0f2f5; 
@@ -329,6 +328,11 @@
     transition: 0.2s;
   }
   .preset-btn:hover { border-color: var(--ac); color: var(--ac); }
+  .preset-btn.active {
+    border-color: var(--ac);
+    background: color-mix(in srgb, var(--ac) 15%, var(--card));
+    color: var(--ac);
+  }
 
   /* 即時預覽區 */
   .preview-box {
@@ -911,6 +915,8 @@ function setStyle(styleName) {
 
 function setBgType(type) {
   localStorage.setItem('bg_type', type);
+  localStorage.removeItem('current_preset'); // 🌟 手動切換時清除預設包紀錄
+  
   if (type === 'solid') {
     document.getElementById('btnBgSolid').classList.add('active');
     document.getElementById('btnBgGradient').classList.remove('active');
@@ -924,6 +930,7 @@ function setBgType(type) {
     document.getElementById('gradientColorGroup').style.display = 'flex';
     applyGradientColor(document.getElementById('bgColor1').value, document.getElementById('bgColor2').value);
   }
+  clearPresetActive(); // 🌟 清除預設包亮燈
 }
 
 function applySolidColor(color) {
@@ -931,6 +938,8 @@ function applySolidColor(color) {
   document.documentElement.style.setProperty('--bg-color-2', color);
   localStorage.setItem('bg_color_1', color);
   localStorage.setItem('bg_color_2', color);
+  localStorage.removeItem('current_preset'); // 🌟 清除紀錄
+  clearPresetActive(); 
 }
 
 function applyGradientColor(color1, color2) {
@@ -938,6 +947,8 @@ function applyGradientColor(color1, color2) {
   document.documentElement.style.setProperty('--bg-color-2', color2);
   localStorage.setItem('bg_color_1', color1);
   localStorage.setItem('bg_color_2', color2);
+  localStorage.removeItem('current_preset'); // 🌟 清除紀錄
+  clearPresetActive();
 }
 
 function applyTextColor(color) {
@@ -945,54 +956,52 @@ function applyTextColor(color) {
   localStorage.setItem('text_color', color);
 }
 
-function setPreset(c1, c2) {
+function setPreset(name, c1, c2) {
+  localStorage.setItem('current_preset', name); // 🌟 記錄選了哪個預設包
   document.getElementById('bgColor1').value = c1;
   document.getElementById('bgColor2').value = c2;
   setBgType('gradient');
   applyGradientColor(c1, c2);
+  renderSettings(); // 重新渲染以點亮按鈕
+}
+
+function clearPresetActive() {
+  document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
 }
 
 function resetAppearance() {
   if(!confirm('確定要將外觀重置為預設值嗎？')) return;
   
-  // 清除儲存的外觀設定
   localStorage.removeItem('style');
   localStorage.removeItem('bg_type');
   localStorage.removeItem('bg_color_1');
   localStorage.removeItem('bg_color_2');
   localStorage.removeItem('text_color');
+  localStorage.removeItem('current_preset'); // 🌟 清除預設包
   
-  // 根據當下深淺模式，給予正確的預設背景與文字顏色
   const currentTheme = document.documentElement.getAttribute('data-theme') || 
                        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   
   let bg1, bg2, textColor;
   if (currentTheme === 'dark') {
-    bg1 = '#111827';
-    bg2 = '#1f2937';
-    textColor = '#f3f4f6';
+    bg1 = '#111827'; bg2 = '#1f2937'; textColor = '#f3f4f6';
   } else {
-    bg1 = '#f0f2f5';
-    bg2 = '#e2e8f0';
-    textColor = '#1a1a1a';
+    bg1 = '#f0f2f5'; bg2 = '#e2e8f0'; textColor = '#1a1a1a';
   }
 
-  // 1. 更新 CSS 變數
   document.documentElement.style.setProperty('--bg-color-1', bg1);
   document.documentElement.style.setProperty('--bg-color-2', bg2);
   document.documentElement.style.setProperty('--text-color', textColor);
   document.documentElement.setAttribute('data-style', 'solid');
   
-  // 2. 重新渲染設定頁面，把預設值塞回輸入框
   renderSettings();
   
-  // 3. 確保渲染完畢後，輸入框的值是正確的
   setTimeout(() => {
     if(document.getElementById('textColorPicker')) document.getElementById('textColorPicker').value = textColor;
     if(document.getElementById('solidColorPicker')) document.getElementById('solidColorPicker').value = bg1;
     if(document.getElementById('bgColor1')) document.getElementById('bgColor1').value = bg1;
     if(document.getElementById('bgColor2')) document.getElementById('bgColor2').value = bg2;
-  }, 0);
+  }, 10);
 }
 
 function renderSettings() {
@@ -1001,6 +1010,7 @@ function renderSettings() {
   const currentBg1 = localStorage.getItem('bg_color_1') || '#f0f2f5';
   const currentBg2 = localStorage.getItem('bg_color_2') || '#e2e8f0';
   const currentText = localStorage.getItem('text_color') || '#1a1a1a';
+  const currentPreset = localStorage.getItem('current_preset') || ''; // 🌟 讀取目前的預設包
   
   A.innerHTML = `
     <div class="card">
@@ -1035,10 +1045,11 @@ function renderSettings() {
         <!-- 漸層選項 -->
         <div id="gradientColorGroup" style="display: ${currentBgType === 'gradient' ? 'flex' : 'none'}; flex-direction: column; gap: 12px;">
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button class="preset-btn" onclick="setPreset('#f0f2f5', '#e2e8f0')">預設白</button>
-            <button class="preset-btn" onclick="setPreset('#ff9a9e', '#fecfef')">晨曦</button>
-            <button class="preset-btn" onclick="setPreset('#a18cd1', '#fbc2eb')">星空</button>
-            <button class="preset-btn" onclick="setPreset('#84fab0', '#8fd3f4')">森林</button>
+            <!-- 🌟 為每個預設包加上判斷，如果符合名字就亮起 active -->
+            <button class="preset-btn ${currentPreset === '預設白' ? 'active' : ''}" onclick="setPreset('預設白', '#f0f2f5', '#e2e8f0')">預設白</button>
+            <button class="preset-btn ${currentPreset === '晨曦' ? 'active' : ''}" onclick="setPreset('晨曦', '#ff9a9e', '#fecfef')">晨曦</button>
+            <button class="preset-btn ${currentPreset === '星空' ? 'active' : ''}" onclick="setPreset('星空', '#a18cd1', '#fbc2eb')">星空</button>
+            <button class="preset-btn ${currentPreset === '森林' ? 'active' : ''}" onclick="setPreset('森林', '#84fab0', '#8fd3f4')">森林</button>
           </div>
           <div class="color-options" style="margin-top: 8px;">
             <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
