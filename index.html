@@ -1771,68 +1771,48 @@ function confirmRandomStart() {
 // 自訂數量隨機抽題核心（保留題組完整連續出題）
 // ==========================================
 function startCustomRandom(targetCount) {
-  currentPage = 'quiz';
-  
-  // 1. 先把題庫依照年份、題號「排好」（這步超重要，確保題組的順序是對的）
-  let sortedQ = [...Q].sort((a, b) => {
-    if (a.y !== b.y) return a.y - b.y;
-    return parseInt(a.n) - parseInt(b.n);
-  });
+  // 1. 先呼叫你原本完美的 start('all')，讓它把所有題目連同題組包好、打亂
+  start('all');
 
-  let packages = []; // 用來裝「包裹」
-  let processedIds = new Set();
-
-  // 2. 遍歷排好序的題目，把獨立題和題組分裝成「包裹」
-  sortedQ.forEach(q => {
-    if (processedIds.has(id(q))) return; // 已經被裝進題組包裡的，跳過
-
-    const groupMatch = q.q.match(/【(\d+)~(\d+)題為題組題】/);
+  // 2. 這時候 list 已經是一個完美打亂、且題組絕對連在一起的陣列了！
+  // 我們只要在「不切斷題組」的前提下，從前面切出 targetCount 的數量。
+  if (list.length > targetCount) {
+    let cutList = [];
+    let currentCount = 0;
     
-    if (groupMatch) {
-      // 這是題組的頭！把整個題組抓出來包成一包
-      const startN = parseInt(groupMatch[1]);
-      const endN = parseInt(groupMatch[2]);
-      
-      let groupQs = sortedQ.filter(item => 
-        item.y === q.y && 
-        parseInt(item.n) >= startN && 
-        parseInt(item.n) <= endN
-      );
+    for (let k = 0; k < list.length; k++) {
+      if (currentCount >= targetCount) break; // 額度滿了就停
 
-      groupQs.forEach(gq => processedIds.add(id(gq)));
+      let q = list[k];
       
-      // 這個包裹裡面有多題，大小就是 groupQs.length
-      packages.push({ type: 'group', items: groupQs, size: groupQs.length });
-      
-    } else {
-      // 這是獨立題，自己包成一包
-      packages.push({ type: 'single', items: [q], size: 1 });
-      processedIds.add(id(q));
+      // 判斷這題是不是「題組的中間或最後一題」（沒有題組標籤，但前面有）
+      let isMiddleOfGroup = false;
+      if (!q.q.match(/【(\d+)~(\d+)題為題組題】/)) {
+        for (let j = parseInt(q.n) - 1; j >= 1; j--) {
+          const prevQ = Q.find(item => item.y === q.y && item.n === j.toString());
+          if (prevQ) {
+            const prevMatch = prevQ.q.match(/【(\d+)~(\d+)題為題組題】/);
+            if (prevMatch && parseInt(q.n) >= parseInt(prevMatch[1]) && parseInt(q.n) <= parseInt(prevMatch[2])) {
+              isMiddleOfGroup = true;
+            }
+            break;
+          }
+        }
+      }
+
+      // 如果現在額度只剩 1，但接下來遇到的是題組的中間題，代表這個題組會爆字數
+      // 我們直接跳過這題，直到遇到下一個獨立題或新題組的第一題
+      if (isMiddleOfGroup && currentCount + 1 > targetCount) {
+        continue;
+      }
+
+      cutList.push(q);
+      currentCount++;
     }
-  });
-
-  // 3. 把所有的「包裹」隨機打亂
-  packages.sort(() => Math.random() - 0.5);
-
-  // 4. 依照你要的題數，精準挑選包裹
-  let finalList = [];
-  let currentCount = 0;
-
-  for (let pkg of packages) {
-    if (currentCount >= targetCount) break; // 額度滿了，停止挑選
-
-    // 👉 關鍵：如果這個包裹加進來會超過總題數，就整包跳過！
-    if (currentCount + pkg.size > targetCount) {
-      continue; 
-    }
-
-    // 把包裹裡面的題目倒進最終清單，並增加額度
-    finalList = finalList.concat(pkg.items);
-    currentCount += pkg.size;
+    list = cutList;
   }
 
-  // 5. 交棒給原本的顯示邏輯
-  list = finalList;
+  // 3. 重設測驗狀態並顯示（完全照抄你原本寫的變數）
   i = 0; 
   userAnswers = {}; 
   sessionStats = { total: list.length, correct: 0 };
