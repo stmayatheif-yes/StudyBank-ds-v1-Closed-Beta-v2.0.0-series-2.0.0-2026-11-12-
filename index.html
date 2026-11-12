@@ -1574,6 +1574,44 @@ function getContrastColor(hexColor) {
   const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
   return (yiq >= 128) ? '#000000' : '#ffffff';
 }
+
+  // ==========================================
+// 問題回報系統邏輯
+// ==========================================
+let currentFeedbackType = 'improve'; // 預設為改進想法
+
+function openFeedbackModal(type) {
+  currentFeedbackType = type;
+  document.getElementById('feedbackModal').classList.add('active');
+}
+
+function closeFeedbackModal(e) {
+  if (!e || e.target.classList.contains('modal-overlay') || e.target.tagName === 'BUTTON') {
+    document.getElementById('feedbackModal').classList.remove('active');
+  }
+}
+
+// 綁定「前往填寫」按鈕的點擊事件
+document.getElementById('feedbackActionBtn').addEventListener('click', () => {
+  let subject = "";
+  let body = "";
+  
+  if (currentFeedbackType === 'improve') {
+    subject = "改進想法";
+    body = "改進項目：(功能/按鍵/圖標/切換功能等)\n\n改進意見：\n\n期望成果：";
+  } else {
+    subject = "問題反饋";
+    body = "反饋項目：(題目文字錯誤/題目表格未顯示/題目未顯示完整等)\n\n反饋意見：\n\n期望成果：";
+  }
+  
+  // 將換行轉為 URL 編碼 (%0D%0A 代表換行)，確保 Gmail 打開時有換行
+  const encodedBody = encodeURIComponent(body).replace(/\n/g, '%0D%0A');
+  
+  // 跳轉至 Gmail 撰寫視窗
+  window.location.href = `https://mail.google.com/mail/?view=cm&fs=1&to=article2037@gmail.com&su=${encodeURIComponent(subject)}&body=${encodedBody}`;
+  
+  closeFeedbackModal();
+});
   
 </script>
 
