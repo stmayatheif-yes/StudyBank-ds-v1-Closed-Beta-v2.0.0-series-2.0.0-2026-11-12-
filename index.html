@@ -333,6 +333,40 @@
     background: color-mix(in srgb, var(--ac) 15%, var(--card));
     color: var(--ac);
   }
+  /* 自訂包與基礎色按鈕樣式 */
+.preset-scroll-wrapper {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.preset-scroll-wrapper::-webkit-scrollbar { display: none; }
+
+.custom-add-btn {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px dashed var(--ac);
+  background: transparent;
+  color: var(--ac);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.custom-add-btn:hover { background: color-mix(in srgb, var(--ac) 10%, var(--card)); }
+
+.solid-color-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--bd);
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.solid-color-dot:hover { transform: scale(1.1); border-color: var(--ac); }
 
   /* 即時預覽區 */
   .preview-box {
