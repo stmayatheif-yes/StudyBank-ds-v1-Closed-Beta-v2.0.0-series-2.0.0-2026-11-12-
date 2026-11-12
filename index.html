@@ -924,9 +924,9 @@ function home(){
         <button onclick="if(confirm('清除紀錄？')){save({w:{},c:0,t:0});home()}" style="flex: 1; color: var(--no); display: flex; align-items: center; justify-content: center;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>清除紀錄</button>
       </div>
     </div>
-  </div>`;
-  <div class="feedback-link" onclick="openFeedbackModal('improve')">任何改進想法？點擊意見反饋。</div>
-  renderAnnouncements();
+  </div>
+<div class="feedback-link" onclick="openFeedbackModal('improve')">任何改進想法？點擊意見反饋。</div>`;
+renderAnnouncements();
 }
 
 // 🌟 核心修改：隨機抽題時，自動將題組綁定並連續出題
@@ -1090,10 +1090,10 @@ function show(){
       else if (picks.has(k)) cls += " sel";
       let cleanText = t.replace(/^\([A-E]\)\s*/, '').replace(/^[A-E][\.\、]\s*/, '');
       return `<button class="${cls}" id="o${k}" onclick="pick(${k})" ${done ? 'disabled' : ''}>(${L[k]}) ${cleanText}</button>`;
-    }).join("")+
+        }).join("")+
     `<div id="f">${done ? generateFeedback(q) : `<button class="go" onclick="submit()">送出答案</button>`}</div>
-  </div>`;
-  <div class="feedback-link" onclick="openFeedbackModal('issue')">題目有問題？點擊反饋。</div>
+  </div>
+  <div class="feedback-link" onclick="openFeedbackModal('issue')">題目有問題？點擊反饋。</div>`;
 }
 
 function generateFeedback(q){
