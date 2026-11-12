@@ -529,6 +529,25 @@
   input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
   input[type="color"]::-webkit-color-swatch { border: 1px solid var(--bd); border-radius: 8px; }
 
+  /* ==========================================
+   問題回報系統 (Feedback System)
+   ========================================== */
+.feedback-link {
+  display: block;
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--fg);
+  opacity: 0.5; /* 深灰靠近黑，使用透明度讓它在深淺色模式都適合 */
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: all 0.2s;
+}
+.feedback-link:hover {
+  opacity: 1;
+  color: var(--ac);
+}
+
 </style>
 </head>
 <body>
