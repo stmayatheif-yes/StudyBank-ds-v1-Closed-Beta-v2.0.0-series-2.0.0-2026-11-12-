@@ -1721,6 +1721,33 @@ function goToFeedbackMail() {
     </div>
   </div>
 </div>
+
+  <!-- 隨機出題數量設定彈窗 -->
+<div id="randomCountModal" class="modal-overlay" onclick="closeRandomModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h3>🎲 隨機出題設定</h3>
+    <p style="font-size: 0.95rem; margin-bottom: 16px;">請輸入或選擇欲練習的題數：</p>
+    
+    <div class="count-input-wrapper">
+      <input type="text" id="randomCountInput" value="20" inputmode="numeric" pattern="[0-9]*">
+      <button class="count-dropdown-btn" onclick="toggleCountOptions()">▼</button>
+    </div>
+    
+    <div id="countQuickOptions" class="count-quick-options">
+      <button class="count-quick-btn" onclick="setRandomCount(5)">5 題</button>
+      <button class="count-quick-btn" onclick="setRandomCount(10)">10 題</button>
+      <button class="count-quick-btn" onclick="setRandomCount(15)">15 題</button>
+      <button class="count-quick-btn" onclick="setRandomCount(20)">20 題</button>
+      <button class="count-quick-btn" onclick="setRandomCount(30)">30 題</button>
+      <button class="count-quick-btn" onclick="setRandomCount(50)">50 題</button>
+    </div>
+
+    <div class="modal-actions" style="margin-top: 0;">
+      <button class="go" onclick="confirmRandomStart()">開始測驗</button>
+      <button class="go" style="background: var(--bd); color: var(--text-color); box-shadow: none;" onclick="closeRandomModal()">取消</button>
+    </div>
+  </div>
+</div>
   
 </body>
 </html>
