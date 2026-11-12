@@ -1766,68 +1766,103 @@ function confirmRandomStart() {
 function startCustomRandom(targetCount) {
   currentPage = 'quiz';
   
-  // 1. 先把所有題目依照「年份」與「題號」排好
-  let allQuestions = [...Q].sort((a, b) => {
-    if (a.y !== b.y) return a.y - b.y;
-    return parseInt(a.n) - parseInt(b.n);
-  });
+  // 1. 複製原本的題庫，並依照你的邏輯打亂
+  let baseList = [...Q].sort(() => Math.random() - 0.5);
 
-  // 2. 把「獨立題目」與「完整題組」打包成不同的單位
-  let units = [];
+  // 2. 把題組包在一起（完全照抄你原本 start('all') 裡的邏輯）
+  let bundledList = [];
   let processedIds = new Set();
 
-  for (let k = 0; k < allQuestions.length; k++) {
-    let q = allQuestions[k];
-    if (processedIds.has(id(q))) continue;
+  baseList.forEach(q => {
+    if (processedIds.has(id(q))) return;
 
-    // 檢查這題有沒有題組標籤
     const groupMatch = q.q.match(/【(\d+)~(\d+)題為題組題】/);
-    
     if (groupMatch) {
       const startN = parseInt(groupMatch[1]);
       const endN = parseInt(groupMatch[2]);
       
-      // 把整個題組精準地拉出來
-      let groupQs = allQuestions.filter(item => 
+      let groupQs = baseList.filter(item => 
         item.y === q.y && 
         parseInt(item.n) >= startN && 
         parseInt(item.n) <= endN
-      );
-      
-      // 標記為已處理，並把「整個題組」當作一個單位 (unit) 塞進去
-      groupQs.forEach(gq => processedIds.add(id(gq)));
-      units.push({ type: 'group', data: groupQs, size: groupQs.length });
-      
+      ).sort((a,b) => parseInt(a.n) - parseInt(b.n));
+
+      groupQs.forEach(gq => {
+        bundledList.push(gq);
+        processedIds.add(id(gq));
+      });
     } else {
-      // 獨立題目，自己當作一個單位
-      units.push({ type: 'single', data: [q], size: 1 });
+      bundledList.push(q);
       processedIds.add(id(q));
     }
-  }
+  });
 
-  // 3. 把這些「單位」全部隨機打亂
-  units.sort(() => Math.random() - 0.5);
-
-  // 4. 依照設定的題數，精準挑選單位
+  // 3. 重新遍歷，確保題組內部連續（完全照抄你的邏輯）
   let finalList = [];
-  let count = 0;
+  let seen = new Set();
+  bundledList.forEach(q => {
+    if (seen.has(id(q))) return;
+    const groupMatch = q.q.match(/【(\d+)~(\d+)題為題組題】/);
+    if (groupMatch) {
+      const startN = parseInt(groupMatch[1]);
+      const endN = parseInt(groupMatch[2]);
+      let groupQs = Q.filter(item => 
+        item.y === q.y && 
+        parseInt(item.n) >= startN && 
+        parseInt(item.n) <= endN
+      ).sort((a,b) => parseInt(a.n) - parseInt(b.n));
+      
+      groupQs.forEach(gq => {
+         if(!seen.has(id(gq))) {
+           finalList.push(gq);
+           seen.add(id(gq));
+         }
+      });
+    } else {
+      finalList.push(q);
+      seen.add(id(q));
+    }
+  });
 
-  for (let unit of units) {
-    if (count >= targetCount) break; // 滿額就跳出迴圈
+  // 4. 這裡是「控制題數」的關鍵：精準挑選，遇到塞不下的題組就跳過
+  let limitList = [];
+  let currentCount = 0;
 
-    // 👉 關鍵：如果剩餘需要的題數「不足以塞下整個題組」，就跳過這個單位
-    if (count + unit.size > targetCount) {
-      continue; 
+  for (let q of finalList) {
+    if (currentCount >= targetCount) break; // 滿了就不加了
+
+    // 檢查這題屬於哪個題組（或獨立）
+    const groupMatch = q.q.match(/【(\d+)~(\d+)題為題組題】/);
+    let blockSize = 1; // 預設是 1 題
+    
+    if (groupMatch) {
+      blockSize = parseInt(groupMatch[2]) - parseInt(groupMatch[1]) + 1;
+    } else {
+      // 如果他不是第一題，往前找所屬題組的總大小
+      for (let j = parseInt(q.n) - 1; j >= 1; j--) {
+        const prevQ = Q.find(item => item.y === q.y && item.n === j.toString());
+        if (prevQ && prevQ.q.includes(`【`) && prevQ.q.includes(`題為題組題】`)) {
+          const prevMatch = prevQ.q.match(/【(\d+)~(\d+)題為題組題】/);
+          if (parseInt(q.n) >= parseInt(prevMatch[1]) && parseInt(q.n) <= parseInt(prevMatch[2])) {
+            blockSize = parseInt(prevMatch[2]) - parseInt(prevMatch[1]) + 1;
+          }
+          break;
+        }
+      }
     }
 
-    // 加入最終陣列，扣除額度
-    finalList = finalList.concat(unit.data);
-    count += unit.size;
+    // 如果加上這題（或這整個題組）會超過題數，就跳過它！
+    if (currentCount + blockSize > targetCount) {
+      // 如果這題是題組的附屬題，我們直接跳過這個題組，不能只加一半
+      // 所以這裡直接 continue 即可
+      continue;
+    }
+
+    limitList.push(q);
+    currentCount++;
   }
 
-  // 5. 準備開始測驗
-  list = finalList;
-  
+  list = limitList;
   i = 0; 
   userAnswers = {}; 
   sessionStats = { total: list.length, correct: 0 };
