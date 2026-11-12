@@ -1765,55 +1765,66 @@ function confirmRandomStart() {
 function startCustomRandom(targetCount) {
   currentPage = 'quiz';
   
-  // 1. 取得所有題目並打亂
-  let allQuestions = Q.filter(q => true); // 複製陣列
-  allQuestions.sort(() => Math.random() - 0.5); 
+  // 1. 先把所有題目依照「年份」與「題號」排好
+  let allQuestions = [...Q].sort((a, b) => {
+    if (a.y !== b.y) return a.y - b.y;
+    return parseInt(a.n) - parseInt(b.n);
+  });
 
-  let finalList = [];
+  // 2. 把「獨立題目」與「完整題組」打包成不同的單位
+  let units = [];
   let processedIds = new Set();
-  let count = 0;
 
-  // 2. 開始遍歷打亂後的題目
-  for (let q of allQuestions) {
-    if (count >= targetCount) break; // 滿額就跳出迴圈
-    if (processedIds.has(id(q))) continue; // 已經被拉進題組的跳過
+  for (let k = 0; k < allQuestions.length; k++) {
+    let q = allQuestions[k];
+    if (processedIds.has(id(q))) continue;
 
+    // 檢查這題有沒有題組標籤
     const groupMatch = q.q.match(/【(\d+)~(\d+)題為題組題】/);
     
     if (groupMatch) {
       const startN = parseInt(groupMatch[1]);
       const endN = parseInt(groupMatch[2]);
-      const groupSize = endN - startN + 1;
-
-      // 👉 關鍵：如果剩餘需要的題數「不足以塞下整個題組」，就跳過這個題組
-      if (count + groupSize > targetCount) {
-        continue; 
-      }
-
-      // 把整個題組拉出來並依照題號排序
-      let groupQs = Q.filter(item => 
+      
+      // 把整個題組精準地拉出來
+      let groupQs = allQuestions.filter(item => 
         item.y === q.y && 
         parseInt(item.n) >= startN && 
         parseInt(item.n) <= endN
-      ).sort((a,b) => parseInt(a.n) - parseInt(b.n));
-
-      // 加入最終陣列，並標記為已處理
-      groupQs.forEach(gq => {
-        finalList.push(gq);
-        processedIds.add(id(gq));
-      });
-      count += groupSize;
-
+      );
+      
+      // 標記為已處理，並把「整個題組」當作一個單位 (unit) 塞進去
+      groupQs.forEach(gq => processedIds.add(id(gq)));
+      units.push({ type: 'group', data: groupQs, size: groupQs.length });
+      
     } else {
-      // 獨立題目
-      if (processedIds.has(id(q))) continue;
-      finalList.push(q);
+      // 獨立題目，自己當作一個單位
+      units.push({ type: 'single', data: [q], size: 1 });
       processedIds.add(id(q));
-      count++;
     }
   }
 
-  // 3. 如果全部題目加起來都不夠（極端情況），就直接用 finalList
+  // 3. 把這些「單位」全部隨機打亂
+  units.sort(() => Math.random() - 0.5);
+
+  // 4. 依照設定的題數，精準挑選單位
+  let finalList = [];
+  let count = 0;
+
+  for (let unit of units) {
+    if (count >= targetCount) break; // 滿額就跳出迴圈
+
+    // 👉 關鍵：如果剩餘需要的題數「不足以塞下整個題組」，就跳過這個單位
+    if (count + unit.size > targetCount) {
+      continue; 
+    }
+
+    // 加入最終陣列，扣除額度
+    finalList = finalList.concat(unit.data);
+    count += unit.size;
+  }
+
+  // 5. 準備開始測驗
   list = finalList;
   
   i = 0; 
