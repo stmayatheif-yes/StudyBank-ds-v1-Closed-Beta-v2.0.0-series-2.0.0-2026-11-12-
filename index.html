@@ -971,7 +971,7 @@ function home(){
     </div>
     <p class="meta"><span>題庫 ${Q.length} 題｜作答 ${s.t}，答對 ${s.c}（${s.t?Math.round(s.c/s.t*100):0}%）｜錯題 ${Object.keys(s.w).length}</span></p>
     <div style="display: flex; flex-direction: column; gap: 12px;">
-      <button class="go" onclick="start('all')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>隨機刷題</button>
+      <button class="go" onclick="openRandomModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>隨機刷題</button>
       <button class="go" onclick="openTypeModal()" style="background: var(--ok); box-shadow: 0 2px 4px color-mix(in srgb, var(--ok) 40%, transparent);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="svg-icon"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /></svg>針對題型練習</button>
       <div style="display: flex; gap: 8px; align-items: center;">
         <select id="yr" style="flex: 1;">${ys.map(y=>`<option value="${y}">${y} 年</option>`)}</select>
