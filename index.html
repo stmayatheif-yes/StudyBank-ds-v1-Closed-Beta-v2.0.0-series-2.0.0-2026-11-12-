@@ -1272,44 +1272,67 @@ function renderSettings() {
         </div>
 
         <!-- 漸層選項 -->
-    <div id="gradientColorGroup" style="display: ${currentBgType === 'gradient' ? 'flex' : 'none'}; flex-direction: column; gap: 12px;">
+<div id="gradientColorGroup" style="display: ${currentBgType === 'gradient' ? 'flex' : 'none'}; flex-direction: column; gap: 12px;">
+  <div class="preset-container">
+    <!-- 右上角編輯按鈕 -->
+    <button class="preset-edit-btn" onclick="toggleEditMode('gradient')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
+        <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+      </svg>
+      ${editingMode === 'gradient' ? '完成' : '編輯'}
+    </button>
+
     <div class="preset-scroll-wrapper">
-    <button class="preset-btn ${currentPreset === '預設白' ? 'active' : ''}" onclick="setPreset('預設白', '#f0f2f5', '#e2e8f0')">預設白</button>
-    <button class="preset-btn ${currentPreset === '晨曦' ? 'active' : ''}" onclick="setPreset('晨曦', '#ff9a9e', '#fecfef')">晨曦</button>
-    <button class="preset-btn ${currentPreset === '星空' ? 'active' : ''}" onclick="setPreset('星空', '#a18cd1', '#fbc2eb')">星空</button>
-    <button class="preset-btn ${currentPreset === '森林' ? 'active' : ''}" onclick="setPreset('森林', '#84fab0', '#8fd3f4')">森林</button>
-    ${renderCustomPresets('gradient')}
-    <button class="custom-add-btn" onclick="openCustomModal('gradient')">＋ 自訂</button>
+      <button class="preset-btn ${currentPreset === '預設白' ? 'active' : ''}" onclick="setPreset('預設白', '#f0f2f5', '#e2e8f0')">預設白</button>
+      <button class="preset-btn ${currentPreset === '晨曦' ? 'active' : ''}" onclick="setPreset('晨曦', '#ff9a9e', '#fecfef')">晨曦</button>
+      <button class="preset-btn ${currentPreset === '星空' ? 'active' : ''}" onclick="setPreset('星空', '#a18cd1', '#fbc2eb')">星空</button>
+      <button class="preset-btn ${currentPreset === '森林' ? 'active' : ''}" onclick="setPreset('森林', '#84fab0', '#8fd3f4')">森林</button>
+      
+      ${renderCustomPresets('gradient')}
+      
+      <button class="custom-add-btn" onclick="openCustomModal('gradient')">＋ 自訂</button>
+    </div>
   </div>
-          <div class="color-options" style="margin-top: 8px;">
-            <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
-              <span style="font-size: 0.9rem;">起始色</span>
-              <input type="color" id="bgColor1" value="${currentBg1}" onchange="applyGradientColor(this.value, document.getElementById('bgColor2').value)">
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
-              <span style="font-size: 0.9rem;">結束色</span>
-              <input type="color" id="bgColor2" value="${currentBg2}" onchange="applyGradientColor(document.getElementById('bgColor1').value, this.value)">
-            </div>
-          </div>
-        </div>
+
+  <div class="color-options" style="margin-top: 8px;">
+    <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+      <span style="font-size: 0.9rem;">起始色</span>
+      <input type="color" id="bgColor1" value="${currentBg1}" onchange="applyGradientColor(this.value, document.getElementById('bgColor2').value)">
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+      <span style="font-size: 0.9rem;">結束色</span>
+      <input type="color" id="bgColor2" value="${currentBg2}" onchange="applyGradientColor(document.getElementById('bgColor1').value, this.value)">
+    </div>
+  </div>
+</div>
 
         <!-- 純色選項 -->
 <div id="solidColorGroup" style="display: ${currentBgType === 'solid' ? 'flex' : 'none'}; flex-direction: column; gap: 12px;">
-  <div class="preset-scroll-wrapper" style="align-items: center; padding-bottom: 10px;">
-    <span style="font-size: 0.9rem; flex-shrink: 0; margin-right: 4px;">顏色</span>
-    <input type="color" id="solidColorPicker" value="${currentBg1}" onchange="applySolidColor(this.value)" style="flex-shrink: 0;">
-    
-    <div class="solid-color-dot" style="background: #ef4444;" onclick="applySolidColor('#ef4444')"></div>
-    <div class="solid-color-dot" style="background: #3b82f6;" onclick="applySolidColor('#3b82f6')"></div>
-    <div class="solid-color-dot" style="background: #10b981;" onclick="applySolidColor('#10b981')"></div>
-    <div class="solid-color-dot" style="background: #f59e0b;" onclick="applySolidColor('#f59e0b')"></div>
-    <div class="solid-color-dot" style="background: #8b5cf6;" onclick="applySolidColor('#8b5cf6')"></div>
+  <div class="preset-container">
+    <!-- 右上角編輯按鈕 -->
+    <button class="preset-edit-btn" onclick="toggleEditMode('solid')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
+        <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+      </svg>
+      ${editingMode === 'solid' ? '完成' : '編輯'}
+    </button>
 
-    ${renderCustomPresets('solid')}
-    <button class="custom-add-btn" onclick="openCustomModal('solid')" style="flex-shrink: 0;">＋ 自訂</button>
+    <div class="preset-scroll-wrapper" style="align-items: center;">
+      <span style="font-size: 0.9rem; flex-shrink: 0; margin-right: 4px;">顏色</span>
+      <input type="color" id="solidColorPicker" value="${currentBg1}" onchange="applySolidColor(this.value)" style="flex-shrink: 0;">
+      
+      <div class="solid-color-dot" style="background: #ef4444;" onclick="applySolidColor('#ef4444')"></div>
+      <div class="solid-color-dot" style="background: #3b82f6;" onclick="applySolidColor('#3b82f6')"></div>
+      <div class="solid-color-dot" style="background: #10b981;" onclick="applySolidColor('#10b981')"></div>
+      <div class="solid-color-dot" style="background: #f59e0b;" onclick="applySolidColor('#f59e0b')"></div>
+      <div class="solid-color-dot" style="background: #8b5cf6;" onclick="applySolidColor('#8b5cf6')"></div>
+      
+      ${renderCustomPresets('solid')}
+      
+      <button class="custom-add-btn" onclick="openCustomModal('solid')" style="flex-shrink: 0;">＋ 自訂</button>
+    </div>
   </div>
 </div>
-      </div>
 
       <hr style="border: none; border-top: 1px dashed var(--bd); margin: 32px 0;">
 
