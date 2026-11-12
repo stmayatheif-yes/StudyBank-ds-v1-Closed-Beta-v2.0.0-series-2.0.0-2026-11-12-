@@ -552,31 +552,38 @@
    隨機出題數量選擇器
    ========================================== */
 .count-input-wrapper {
-  display: flex;
-  gap: 8px;
+  position: relative; /* 👈 改用絕對定位，徹底解決箭頭被擠出的問題 */
   margin-bottom: 12px;
 }
 .count-input-wrapper input {
-  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
   text-align: center;
   font-size: 1.2rem;
   font-weight: bold;
   margin: 0;
-  padding: 12px;
+  padding: 12px 48px 12px 12px; /* 👈 右邊留空間給箭頭，文字才不會被重疊 */
 }
 .count-dropdown-btn {
-  flex-shrink: 0;
-  background: var(--bg);
-  border: 1px solid var(--bd);
-  border-radius: 8px;
-  padding: 0 16px;
+  position: absolute; /* 👈 絕對定位 */
+  right: 6px;         /* 👈 靠右 */
+  top: 50%;           /* 👈 垂直置中 */
+  transform: translateY(-50%);
+  background: transparent; /* 👈 背景透明，看起來就像在框框裡 */
+  border: none;
+  box-shadow: none;
+  padding: 8px 12px;
   font-size: 1.2rem;
+  color: var(--text-color);
   cursor: pointer;
+  border-radius: 6px;
   transition: 0.2s;
   margin: 0;
+  height: auto;
+  width: auto;
 }
 .count-dropdown-btn:hover {
-  border-color: var(--ac);
+  background: color-mix(in srgb, var(--ac) 10%, var(--card));
   color: var(--ac);
 }
 .count-quick-options {
