@@ -121,6 +121,8 @@
   .ok { border-color: var(--ok) !important; background: color-mix(in srgb, var(--ok) 15%, var(--card)) !important; color: var(--ok) !important; }
   .no { border-color: var(--no) !important; background: color-mix(in srgb, var(--no) 15%, var(--card)) !important; color: var(--no) !important; }
   
+  .missed { border-color: var(--ok) !important; background: transparent !important; color: var(--ok); border-style: dashed !important; }
+
   .go { background: var(--ac); color: #fff !important; border: none; font-weight: bold; width: 100%; padding: 14px; margin-top: 12px; border-radius: 10px; box-shadow: 0 2px 4px color-mix(in srgb, var(--ac) 40%, transparent); display: flex; align-items: center; justify-content: center; gap: 8px; }
   .go:hover:not(:disabled) { background: var(--ac-hover); transform: translateY(-2px); box-shadow: 0 4px 8px color-mix(in srgb, var(--ac) 50%, transparent); }
   .meta { color: var(--text-color); opacity: 0.6; font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px dashed var(--bd); }
@@ -666,7 +668,7 @@ let sessionStats = { total: 0, correct: 0 };
 let currentSearchResults = []; 
 
 let isReviewingWrong = false; 
-let currentPage = 'home'; // 🌟 新增：記錄目前在哪個頁面
+let currentPage = 'home';
 
 const A=document.getElementById("app");
 const id=q=>q.y+"-"+q.n;
@@ -764,16 +766,137 @@ function home(){
   renderAnnouncements();
 }
 
+// 🌟 核心修改：隨機抽題時，自動將題組綁定並連續出題
 function start(m,v){
   currentPage = 'quiz'; // 🌟 標記目前在刷題
   const s=S();
-  list=Q.filter(q=>m=="all"||(m=="y"&&q.y==v)||(m=="w"&&s.w[id(q)]));
-  if(!list.length){alert("沒有題目");return}
-  if (m === "all" || m === "w") list.sort(()=>Math.random() - 0.5); 
-  else list.sort((a, b) => parseInt(a.n) - parseInt(b.n));
+  let baseList = Q.filter(q=>m=="all"||(m=="y"&&q.y==v)||(m=="w"&&s.w[id(q)]));
+  if(!baseList.length){alert("沒有題目");return}
+
+  if (m === "all" || m === "w") {
+    // 處理隨機模式：把題組綁在一起
+    let bundledList = [];
+    let processedIds = new Set();
+
+    baseList.forEach(q => {
+      if (processedIds.has(id(q))) return;
+
+      // 檢查這題有沒有題組標籤
+      const groupMatch = q.q.match(/【(\d+)~(\d+)題為題組題】/);
+      if (groupMatch) {
+        const startN = parseInt(groupMatch[1]);
+        const endN = parseInt(groupMatch[2]);
+        
+        // 把整個題組拉出來，並依照題號排序
+        let groupQs = baseList.filter(item => 
+          item.y === q.y && 
+          parseInt(item.n) >= startN && 
+          parseInt(item.n) <= endN
+        ).sort((a,b) => parseInt(a.n) - parseInt(b.n));
+
+        groupQs.forEach(gq => {
+          bundledList.push(gq);
+          processedIds.add(id(gq));
+        });
+      } else {
+        // 獨立題目
+        bundledList.push(q);
+        processedIds.add(id(q));
+      }
+    });
+    // 最後把「題組包」跟「獨立題目」隨機打亂
+    list = bundledList.sort(() => Math.random() - 0.5);
+    
+    // 但因為隨機打亂會把題組拆散，所以我們要再重新遍歷一次，確保題組內部是連續的
+    let finalList = [];
+    let seen = new Set();
+    list.forEach(q => {
+      if (seen.has(id(q))) return;
+      const groupMatch = q.q.match(/【(\d+)~(\d+)題為題組題】/);
+      if (groupMatch) {
+        const startN = parseInt(groupMatch[1]);
+        const endN = parseInt(groupMatch[2]);
+        let groupQs = Q.filter(item => 
+          item.y === q.y && 
+          parseInt(item.n) >= startN && 
+          parseInt(item.n) <= endN
+        ).sort((a,b) => parseInt(a.n) - parseInt(b.n));
+        
+        groupQs.forEach(gq => {
+           if(!seen.has(id(gq))) {
+             finalList.push(gq);
+             seen.add(id(gq));
+           }
+        });
+      } else {
+        finalList.push(q);
+        seen.add(id(q));
+      }
+    });
+    list = finalList;
+
+  } else {
+    // 依年度模式：直接照題號排
+    list = baseList.sort((a, b) => parseInt(a.n) - parseInt(b.n));
+  }
+
   i=0; userAnswers = {}; sessionStats = { total: list.length, correct: 0 };
   isReviewingWrong = (m === "w"); 
   show();
+}
+
+// 🌟 新增：自動尋找題組引文的邏輯 (包含表格)
+function getQuestionText(q) {
+  let text = q.q;
+  
+  // 1. 檢查自己是不是題組的第一題
+  const groupMatch = text.match(/【(\d+)~(\d+)題為題組題】/);
+  let groupStartNum = null;
+  
+  if (groupMatch) {
+    groupStartNum = groupMatch[1];
+  } else {
+    // 2. 如果自己不是第一題，往前找最近有標籤的題目
+    for (let j = parseInt(q.n) - 1; j >= 1; j--) {
+      const prevQ = Q.find(item => item.y === q.y && item.n === j.toString());
+      if (prevQ) {
+        const prevMatch = prevQ.q.match(/【(\d+)~(\d+)題為題組題】/);
+        if (prevMatch) {
+          // 確保現在的題號有在該題組的範圍內
+          if (parseInt(q.n) >= parseInt(prevMatch[1]) && parseInt(q.n) <= parseInt(prevMatch[2])) {
+            groupStartNum = prevMatch[1];
+          }
+          break; // 找到最近的題組標籤就停下
+        }
+      }
+    }
+  }
+
+  // 3. 如果確定是題組題，就把題組第一題的引文與表格抓過來
+  if (groupStartNum) {
+    const groupStartQ = Q.find(item => item.y === q.y && item.n === groupStartNum);
+    if (groupStartQ) {
+      let quoteText = groupStartQ.q;
+      
+      // 移除題組第一題的標籤，避免重複顯示
+      quoteText = quoteText.replace(/【\d+~\d+題為題組題】\n*/g, '');
+      
+      // 找到引文結束的位置（最後一個雙換行）
+      const lastBreak = quoteText.lastIndexOf('\n\n');
+      if (lastBreak !== -1) {
+        const pureQuote = quoteText.substring(0, lastBreak);
+        // 如果這題就是題組第一題，就顯示題組標籤 + 引文 + 題目
+        if (q.n === groupStartNum) {
+           text = text; // 保持原樣
+        } else {
+           // 如果是附屬題，就在前面補上引文
+           text = `${pureQuote}\n\n${text}`;
+        }
+      }
+    }
+  }
+  
+  return text;
 }
 
 function show(){
@@ -781,6 +904,8 @@ function show(){
   const q=list[i];
   picks = new Set(userAnswers[id(q)] || []);
   done = userAnswers[id(q)] !== undefined;
+  
+  const displayText = getQuestionText(q);
 
   A.innerHTML=`<div class="card">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px dashed var(--bd);">
@@ -788,10 +913,17 @@ function show(){
       <button onclick="prev()" ${i===0?'disabled':''} style="padding: 4px 10px; font-size: 0.8rem; margin: 0 8px; flex-shrink: 0;">上一題</button>
       <button onclick="home()" style="padding: 6px 12px; font-size: 0.85rem; margin: 0; flex-shrink: 0;">結束</button>
     </div>
-    <p style="font-size: 1.1rem; font-weight: 500;">${q.q}</p>`+
+    <p style="font-size: 1.1rem; font-weight: 500;">${displayText}</p>`+
     q.o.map((t,k)=>{
       let cls = "opt";
-      if (done) { if (q.a.includes(L[k])) cls += " ok"; else if (picks.has(k)) cls += " no"; } 
+      if (done) { 
+        if (q.a.includes(L[k])) {
+          if (picks.has(k)) { cls += " ok"; } 
+          else { cls += " missed"; }
+        } else if (picks.has(k)) { 
+          cls += " no"; 
+        }
+      } 
       else if (picks.has(k)) cls += " sel";
       let cleanText = t.replace(/^\([A-E]\)\s*/, '').replace(/^[A-E][\.\、]\s*/, '');
       return `<button class="${cls}" id="o${k}" onclick="pick(${k})" ${done ? 'disabled' : ''}>(${L[k]}) ${cleanText}</button>`;
@@ -830,8 +962,13 @@ function submit(){
   q.o.forEach((_,k)=>{
     const b=document.getElementById("o"+k);
     b.classList.remove("sel");
-    if(q.a.includes(L[k]))b.classList.add("ok");
-    else if(picks.has(k))b.classList.add("no");
+    
+    if (q.a.includes(L[k])) {
+      if (picks.has(k)) b.classList.add("ok");
+      else b.classList.add("missed");
+    } else if (picks.has(k)) {
+      b.classList.add("no");
+    }
     b.disabled = true; 
   });
   
