@@ -721,7 +721,7 @@ function renderVersions() {
   // 渲染 1.0 系列
   const sortedV1 = [...v1History].reverse();
   sortedV1.forEach((item, index) => {
-    const isLatest = index === sortedV1.length - 1; 
+    const isLatest = item.version === VERSION_HISTORY[0].version;
     historyHTML1 += `<div class="history-item-horizontal ${isLatest ? 'latest' : ''}"><strong>${item.version}</strong><div class="history-date">${item.date}</div><div class="history-desc">${item.desc.replace(/\n/g, '<br>')}</div></div>`;
   });
 
