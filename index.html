@@ -1399,13 +1399,79 @@ function renderCustomPresets(type) {
   const storageKey = type === 'gradient' ? 'custom_gradients' : 'custom_solids';
   const presets = JSON.parse(localStorage.getItem(storageKey)) || [];
 
-  return presets.map((p) => {
-    if (type === 'gradient') {
-      return `<button class="preset-btn" style="background: linear-gradient(135deg, ${p.c1}, ${p.c2}); color: ${getContrastColor(p.c1)}; border-color: transparent;" onclick="setCustomGradient('${p.name}', '${p.c1}', '${p.c2}')">${p.name}</button>`;
-    } else {
-      return `<button class="preset-btn" style="background: ${p.c1}; color: ${getContrastColor(p.c1)}; border-color: transparent;" onclick="applySolidColor('${p.c1}')">${p.name}</button>`;
-    }
+  return presets.map((p, index) => {
+    const bgStyle = type === 'gradient'
+      ? `linear-gradient(135deg, ${p.c1}, ${p.c2})`
+      : p.c1;
+    const textColor = getContrastColor(p.c1);
+    
+    // 點擊本體：如果在編輯模式就開啟編輯視窗，否則直接套用顏色
+    const clickAction = editingMode === type 
+      ? `editCustomPreset('${type}', ${index})` 
+      : (type === 'gradient' 
+          ? `setCustomGradient('${p.name}', '${p.c1}', '${p.c2}')` 
+          : `applySolidColor('${p.c1}')`);
+
+    // 判斷是否顯示刪除按鈕 (X)
+    const deleteBtn = editingMode === type 
+      ? `<div class="custom-preset-delete" onclick="event.stopPropagation(); deleteCustomPreset('${type}', ${index})">✕</div>` 
+      : '';
+
+    return `<div class="custom-preset-item">
+      ${deleteBtn}
+      <button class="preset-btn" style="background: ${bgStyle}; color: ${textColor}; border-color: transparent;" onclick="${clickAction}">${p.name}</button>
+    </div>`;
   }).join('');
+}
+
+// 編輯模式下的修改儲存
+function editCustomPreset(type, index) {
+  const storageKey = type === 'gradient' ? 'custom_gradients' : 'custom_solids';
+  const presets = JSON.parse(localStorage.getItem(storageKey)) || [];
+  const p = presets[index];
+  if (!p) return;
+
+  currentCustomType = type;
+  document.getElementById('customNameInput').value = p.name;
+  document.getElementById('customDescInput').value = p.desc || '';
+  document.getElementById('customPresetModal').classList.add('active');
+
+  const modal = document.getElementById('customPresetModal');
+  const saveBtn = modal.querySelector('.go'); // 抓第一個 .go 按鈕
+  saveBtn.textContent = '更新';
+  saveBtn.onclick = () => updateCustomPreset(type, index);
+}
+
+function updateCustomPreset(type, index) {
+  const storageKey = type === 'gradient' ? 'custom_gradients' : 'custom_solids';
+  const presets = JSON.parse(localStorage.getItem(storageKey)) || [];
+  if (!presets[index]) return;
+
+  const newName = document.getElementById('customNameInput').value.trim() || presets[index].name;
+  const newDesc = document.getElementById('customDescInput').value.trim();
+
+  presets[index].name = newName;
+  presets[index].desc = newDesc;
+  localStorage.setItem(storageKey, JSON.stringify(presets));
+
+  const modal = document.getElementById('customPresetModal');
+  const saveBtn = modal.querySelector('.go');
+  saveBtn.textContent = '儲存';
+  saveBtn.onclick = saveCustomPreset;
+
+  closeCustomModal();
+  renderSettings();
+}
+
+function deleteCustomPreset(type, index) {
+  const storageKey = type === 'gradient' ? 'custom_gradients' : 'custom_solids';
+  const presets = JSON.parse(localStorage.getItem(storageKey)) || [];
+  if (!presets[index]) return;
+  if (!confirm(`確定要刪除「${presets[index].name}」嗎？`)) return;
+
+  presets.splice(index, 1);
+  localStorage.setItem(storageKey, JSON.stringify(presets));
+  renderSettings();
 }
 
 function setCustomGradient(name, c1, c2) {
