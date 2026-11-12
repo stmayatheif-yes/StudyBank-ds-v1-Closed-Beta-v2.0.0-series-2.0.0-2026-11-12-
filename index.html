@@ -5,10 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>學測歷屆國文試題刷題題庫系統</title>
 
-<meta property="og:title" content="學測歷屆試題刷題題庫系統">
-<meta property="og:description" content="收錄110-115學測歷屆試題。提供隨機刷題、依年度練習、錯題複習與深淺色模式切換功能。">
-
 <style>
+  /* 👇 2.0 核心變數 */
   :root { 
     color-scheme: light dark; 
     --bg: #f0f2f5; 
@@ -893,12 +891,7 @@ function switchPage(page) {
   toggleSidebar();
 
   if (page === 'home') {
-    // 🌟 修正問題一：判斷剛剛是不是在刷題，如果是，就回到原本的題目，而不是回主頁
-    if (currentPage === 'quiz') {
-      show();
-    } else {
-      home();
-    }
+    if (currentPage === 'quiz') { show(); } else { home(); }
   } else if (page === 'settings') {
     renderSettings(); 
   }
@@ -915,8 +908,6 @@ function setStyle(styleName) {
 
 function setBgType(type) {
   localStorage.setItem('bg_type', type);
-  localStorage.removeItem('current_preset'); // 🌟 手動切換時清除預設包紀錄
-  
   if (type === 'solid') {
     document.getElementById('btnBgSolid').classList.add('active');
     document.getElementById('btnBgGradient').classList.remove('active');
@@ -930,7 +921,6 @@ function setBgType(type) {
     document.getElementById('gradientColorGroup').style.display = 'flex';
     applyGradientColor(document.getElementById('bgColor1').value, document.getElementById('bgColor2').value);
   }
-  clearPresetActive(); // 🌟 清除預設包亮燈
 }
 
 function applySolidColor(color) {
@@ -938,8 +928,8 @@ function applySolidColor(color) {
   document.documentElement.style.setProperty('--bg-color-2', color);
   localStorage.setItem('bg_color_1', color);
   localStorage.setItem('bg_color_2', color);
-  localStorage.removeItem('current_preset'); // 🌟 清除紀錄
-  clearPresetActive(); 
+  localStorage.removeItem('current_preset'); // 🌟 拉動調色盤時清除預設包紀錄
+  clearPresetActive();
 }
 
 function applyGradientColor(color1, color2) {
@@ -947,7 +937,7 @@ function applyGradientColor(color1, color2) {
   document.documentElement.style.setProperty('--bg-color-2', color2);
   localStorage.setItem('bg_color_1', color1);
   localStorage.setItem('bg_color_2', color2);
-  localStorage.removeItem('current_preset'); // 🌟 清除紀錄
+  localStorage.removeItem('current_preset'); // 🌟 拉動調色盤時清除預設包紀錄
   clearPresetActive();
 }
 
@@ -960,8 +950,14 @@ function setPreset(name, c1, c2) {
   localStorage.setItem('current_preset', name); // 🌟 記錄選了哪個預設包
   document.getElementById('bgColor1').value = c1;
   document.getElementById('bgColor2').value = c2;
-  setBgType('gradient');
-  applyGradientColor(c1, c2);
+  
+  // 直接寫入變數，不呼叫 setBgType (避免被清除紀錄)
+  document.documentElement.style.setProperty('--bg-color-1', c1);
+  document.documentElement.style.setProperty('--bg-color-2', c2);
+  localStorage.setItem('bg_color_1', c1);
+  localStorage.setItem('bg_color_2', c2);
+  localStorage.setItem('bg_type', 'gradient');
+  
   renderSettings(); // 重新渲染以點亮按鈕
 }
 
@@ -995,13 +991,6 @@ function resetAppearance() {
   document.documentElement.setAttribute('data-style', 'solid');
   
   renderSettings();
-  
-  setTimeout(() => {
-    if(document.getElementById('textColorPicker')) document.getElementById('textColorPicker').value = textColor;
-    if(document.getElementById('solidColorPicker')) document.getElementById('solidColorPicker').value = bg1;
-    if(document.getElementById('bgColor1')) document.getElementById('bgColor1').value = bg1;
-    if(document.getElementById('bgColor2')) document.getElementById('bgColor2').value = bg2;
-  }, 10);
 }
 
 function renderSettings() {
@@ -1096,14 +1085,6 @@ function renderSettings() {
       
     </div>
   `;
-
-  // 🌟 修正問題二：強制在 DOM 渲染完畢後，重新把值塞入調色盤中
-  setTimeout(() => {
-    if(document.getElementById('bgColor1')) document.getElementById('bgColor1').value = currentBg1;
-    if(document.getElementById('bgColor2')) document.getElementById('bgColor2').value = currentBg2;
-    if(document.getElementById('solidColorPicker')) document.getElementById('solidColorPicker').value = currentBg1;
-    if(document.getElementById('textColorPicker')) document.getElementById('textColorPicker').value = currentText;
-  }, 10);
 }
 </script>
 </body>
