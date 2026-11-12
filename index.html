@@ -1323,15 +1323,15 @@ function renderSettings() {
     </button>
 
     <div class="preset-scroll-wrapper">
-      <button class="preset-btn ${currentPreset === '預設白' ? 'active' : ''}" onclick="setPreset('預設白', '#f0f2f5', '#e2e8f0')">預設白</button>
-      <button class="preset-btn ${currentPreset === '晨曦' ? 'active' : ''}" onclick="setPreset('晨曦', '#ff9a9e', '#fecfef')">晨曦</button>
-      <button class="preset-btn ${currentPreset === '星空' ? 'active' : ''}" onclick="setPreset('星空', '#a18cd1', '#fbc2eb')">星空</button>
-      <button class="preset-btn ${currentPreset === '森林' ? 'active' : ''}" onclick="setPreset('森林', '#84fab0', '#8fd3f4')">森林</button>
-      
-      ${renderCustomPresets('gradient')}
-      
-      <button class="custom-add-btn" onclick="openCustomModal('gradient')">＋ 自訂</button>
-    </div>
+  <button class="preset-btn ${currentPreset === '預設白' ? 'active' : ''}" style="background: linear-gradient(135deg, #f0f2f5, #e2e8f0); color: #333;" onclick="setPreset('預設白', '#f0f2f5', '#e2e8f0')">預設白</button>
+  <button class="preset-btn ${currentPreset === '晨曦' ? 'active' : ''}" style="background: linear-gradient(135deg, #ff9a9e, #fecfef); color: #333;" onclick="setPreset('晨曦', '#ff9a9e', '#fecfef')">晨曦</button>
+  <button class="preset-btn ${currentPreset === '星空' ? 'active' : ''}" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb); color: #333;" onclick="setPreset('星空', '#a18cd1', '#fbc2eb')">星空</button>
+  <button class="preset-btn ${currentPreset === '森林' ? 'active' : ''}" style="background: linear-gradient(135deg, #84fab0, #8fd3f4); color: #333;" onclick="setPreset('森林', '#84fab0', '#8fd3f4')">森林</button>
+  
+  ${renderCustomPresets('gradient')}
+  
+  <button class="custom-add-btn" onclick="openCustomModal('gradient')">＋ 自訂</button>
+</div>
   </div>
 
   <div class="color-options" style="margin-top: 8px;">
