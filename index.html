@@ -1343,6 +1343,15 @@ function renderSettings() {
 // ==========================================
 let currentCustomType = 'gradient';
 
+  // 記錄目前是哪個區塊在編輯模式 ('gradient' 或 'solid' 或 null)
+let editingMode = null;
+
+// 切換編輯模式
+function toggleEditMode(type) {
+  editingMode = (editingMode === type) ? null : type;
+  renderSettings(); // 重新渲染設定頁
+}
+  
 function openCustomModal(type) {
   currentCustomType = type;
   document.getElementById('customNameInput').value = '';
