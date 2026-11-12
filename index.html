@@ -555,23 +555,35 @@
   }
 
   /* 3. 歷史版本區塊：在手機端改成「直向排列」且可上下滑動 */
-  .history-scroll-container {
-    flex-direction: column !important; /* 改成直向 */
-    overflow-x: hidden !important;     /* 隱藏橫向滑動 */
-    overflow-y: auto !important;       /* 開啟上下滑動 */
-    flex: 1;
-    max-height: none;                  /* 交由外層 Flex 控制 */
-    padding: 16px !important;
-    border-top: none !important;
-    -webkit-overflow-scrolling: touch;
-  }
+details.version-group {
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* 解決 flex 子元素無法收縮的問題 */
+  flex: 1;
+  margin-bottom: 0; /* 拿掉多餘的邊距 */
+}
 
-  /* 讓歷史版本的卡片在手機端變為全寬，比較好閱讀 */
-  .history-item-horizontal {
-    flex: 0 0 auto !important;
-    width: 100% !important;
-    margin-bottom: 12px;
-  }
+/* 確保 summary 不會被壓縮 */
+details.version-group summary {
+  flex-shrink: 0;
+}
+
+.history-scroll-container {
+  flex-direction: column !important; /* 改成直向 */
+  overflow-x: hidden !important;     /* 隱藏橫向滑動 */
+  overflow-y: auto !important;       /* 開啟上下滑動 */
+  flex: 1;                           /* 佔滿剩餘空間 */
+  min-height: 0;                     /* 關鍵：讓它可以正確計算剩餘高度並產生滾動條 */
+  padding: 16px !important;
+  border-top: none !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 讓歷史版本的卡片在手機端變為全寬 */
+.history-item-horizontal {
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  margin-bottom: 12px;
 }
 
 </style>
