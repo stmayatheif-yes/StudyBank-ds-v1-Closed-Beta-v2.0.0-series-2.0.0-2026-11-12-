@@ -1203,14 +1203,14 @@ function renderSettings() {
         </div>
 
         <!-- 漸層選項 -->
-        <div id="gradientColorGroup" style="display: ${currentBgType === 'gradient' ? 'flex' : 'none'}; flex-direction: column; gap: 12px;">
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <!-- 🌟 為每個預設包加上判斷，如果符合名字就亮起 active -->
-            <button class="preset-btn ${currentPreset === '預設白' ? 'active' : ''}" onclick="setPreset('預設白', '#f0f2f5', '#e2e8f0')">預設白</button>
-            <button class="preset-btn ${currentPreset === '晨曦' ? 'active' : ''}" onclick="setPreset('晨曦', '#ff9a9e', '#fecfef')">晨曦</button>
-            <button class="preset-btn ${currentPreset === '星空' ? 'active' : ''}" onclick="setPreset('星空', '#a18cd1', '#fbc2eb')">星空</button>
-            <button class="preset-btn ${currentPreset === '森林' ? 'active' : ''}" onclick="setPreset('森林', '#84fab0', '#8fd3f4')">森林</button>
-          </div>
+    <div id="gradientColorGroup" style="display: ${currentBgType === 'gradient' ? 'flex' : 'none'}; flex-direction: column; gap: 12px;">
+    <div class="preset-scroll-wrapper">
+    <button class="preset-btn ${currentPreset === '預設白' ? 'active' : ''}" onclick="setPreset('預設白', '#f0f2f5', '#e2e8f0')">預設白</button>
+    <button class="preset-btn ${currentPreset === '晨曦' ? 'active' : ''}" onclick="setPreset('晨曦', '#ff9a9e', '#fecfef')">晨曦</button>
+    <button class="preset-btn ${currentPreset === '星空' ? 'active' : ''}" onclick="setPreset('星空', '#a18cd1', '#fbc2eb')">星空</button>
+    <button class="preset-btn ${currentPreset === '森林' ? 'active' : ''}" onclick="setPreset('森林', '#84fab0', '#8fd3f4')">森林</button>
+    <button class="custom-add-btn" onclick="alert('漸層自訂功能準備中')">＋ 自訂</button>
+  </div>
           <div class="color-options" style="margin-top: 8px;">
             <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
               <span style="font-size: 0.9rem;">起始色</span>
@@ -1224,10 +1224,20 @@ function renderSettings() {
         </div>
 
         <!-- 純色選項 -->
-        <div id="solidColorGroup" style="display: ${currentBgType === 'solid' ? 'flex' : 'none'}; align-items: center; gap: 12px;">
-          <span style="font-size: 0.9rem;">選擇顏色</span>
-          <input type="color" id="solidColorPicker" value="${currentBg1}" onchange="applySolidColor(this.value)">
-        </div>
+<div id="solidColorGroup" style="display: ${currentBgType === 'solid' ? 'flex' : 'none'}; flex-direction: column; gap: 12px;">
+  <div class="preset-scroll-wrapper" style="align-items: center; padding-bottom: 10px;">
+    <span style="font-size: 0.9rem; flex-shrink: 0; margin-right: 4px;">顏色</span>
+    <input type="color" id="solidColorPicker" value="${currentBg1}" onchange="applySolidColor(this.value)" style="flex-shrink: 0;">
+    
+    <div class="solid-color-dot" style="background: #ef4444;" onclick="applySolidColor('#ef4444')"></div>
+    <div class="solid-color-dot" style="background: #3b82f6;" onclick="applySolidColor('#3b82f6')"></div>
+    <div class="solid-color-dot" style="background: #10b981;" onclick="applySolidColor('#10b981')"></div>
+    <div class="solid-color-dot" style="background: #f59e0b;" onclick="applySolidColor('#f59e0b')"></div>
+    <div class="solid-color-dot" style="background: #8b5cf6;" onclick="applySolidColor('#8b5cf6')"></div>
+    
+    <button class="custom-add-btn" onclick="alert('純色自訂功能準備中')" style="flex-shrink: 0;">＋ 自訂</button>
+  </div>
+</div>
       </div>
 
       <hr style="border: none; border-top: 1px dashed var(--bd); margin: 32px 0;">
