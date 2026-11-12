@@ -1093,6 +1093,7 @@ function show(){
     }).join("")+
     `<div id="f">${done ? generateFeedback(q) : `<button class="go" onclick="submit()">送出答案</button>`}</div>
   </div>`;
+  <div class="feedback-link" onclick="openFeedbackModal('issue')">題目有問題？點擊反饋。</div>
 }
 
 function generateFeedback(q){
