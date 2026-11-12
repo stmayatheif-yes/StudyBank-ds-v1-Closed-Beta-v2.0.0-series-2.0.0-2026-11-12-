@@ -694,14 +694,31 @@ const VERSION_HISTORY = [
 function renderVersions() {
   const current = VERSION_HISTORY[0];
   document.getElementById('currentVersionContent').innerHTML = `★當前版本：${current.version}<br>★版本內容：${current.desc.replace(/\n/g, '<br>')}<br>★更新時間：${current.date}`;
+  
+  // 自動分類：把 v1 跟 v2 分開
   const v1History = VERSION_HISTORY.filter(v => v.version.startsWith('v1.'));
+  const v2History = VERSION_HISTORY.filter(v => v.version.startsWith('v2.'));
+  
+  let historyHTML1 = "";
+  let historyHTML2 = "";
+
+  // 渲染 1.0 系列
   const sortedV1 = [...v1History].reverse();
-  let historyHTML = "";
   sortedV1.forEach((item, index) => {
     const isLatest = index === sortedV1.length - 1; 
-    historyHTML += `<div class="history-item-horizontal ${isLatest ? 'latest' : ''}"><strong>${item.version}</strong><div class="history-date">${item.date}</div><div class="history-desc">${item.desc.replace(/\n/g, '<br>')}</div></div>`;
+    historyHTML1 += `<div class="history-item-horizontal ${isLatest ? 'latest' : ''}"><strong>${item.version}</strong><div class="history-date">${item.date}</div><div class="history-desc">${item.desc.replace(/\n/g, '<br>')}</div></div>`;
   });
-  document.getElementById('historyList1').innerHTML = historyHTML;
+
+  // 渲染 2.0 系列
+  const sortedV2 = [...v2History].reverse();
+  sortedV2.forEach((item, index) => {
+    const isLatest = index === sortedV2.length - 1; 
+    historyHTML2 += `<div class="history-item-horizontal ${isLatest ? 'latest' : ''}"><strong>${item.version}</strong><div class="history-date">${item.date}</div><div class="history-desc">${item.desc.replace(/\n/g, '<br>')}</div></div>`;
+  });
+
+  // 塞進畫面裡
+  document.getElementById('historyList1').innerHTML = historyHTML1;
+  document.getElementById('historyList2').innerHTML = historyHTML2 || '<div style="padding: 16px; text-align: center; opacity: 0.6;">目前沒有資料</div>';
 }
 renderVersions();
 
