@@ -1771,109 +1771,57 @@ function confirmRandomStart() {
 // 自訂數量隨機抽題核心（保留題組完整連續出題）
 // ==========================================
 function startCustomRandom(targetCount) {
-  currentPage = 'quiz';
-  
-  // 1. 複製原本的題庫，並依照你的邏輯打亂
-  let baseList = [...Q].sort(() => Math.random() - 0.5);
+  // 1. 先呼叫你原本完美無缺的 start('all')，讓它把所有題目連同題組包好、打亂
+  start('all');
 
-  // 2. 把題組包在一起（完全照抄你原本 start('all') 裡的邏輯）
-  let bundledList = [];
-  let processedIds = new Set();
-
-  baseList.forEach(q => {
-    if (processedIds.has(id(q))) return;
-
-    const groupMatch = q.q.match(/【(\d+)~(\d+)題為題組題】/);
-    if (groupMatch) {
-      const startN = parseInt(groupMatch[1]);
-      const endN = parseInt(groupMatch[2]);
-      
-      let groupQs = baseList.filter(item => 
-        item.y === q.y && 
-        parseInt(item.n) >= startN && 
-        parseInt(item.n) <= endN
-      ).sort((a,b) => parseInt(a.n) - parseInt(b.n));
-
-      groupQs.forEach(gq => {
-        bundledList.push(gq);
-        processedIds.add(id(gq));
-      });
-    } else {
-      bundledList.push(q);
-      processedIds.add(id(q));
-    }
-  });
-
-  // 3. 重新遍歷，確保題組內部連續（完全照抄你的邏輯）
-  let finalList = [];
-  let seen = new Set();
-  bundledList.forEach(q => {
-    if (seen.has(id(q))) return;
-    const groupMatch = q.q.match(/【(\d+)~(\d+)題為題組題】/);
-    if (groupMatch) {
-      const startN = parseInt(groupMatch[1]);
-      const endN = parseInt(groupMatch[2]);
-      let groupQs = Q.filter(item => 
-        item.y === q.y && 
-        parseInt(item.n) >= startN && 
-        parseInt(item.n) <= endN
-      ).sort((a,b) => parseInt(a.n) - parseInt(b.n));
-      
-      groupQs.forEach(gq => {
-         if(!seen.has(id(gq))) {
-           finalList.push(gq);
-           seen.add(id(gq));
-         }
-      });
-    } else {
-      finalList.push(q);
-      seen.add(id(q));
-    }
-  });
-
-  // 4. 這裡是「控制題數」的關鍵：精準挑選，遇到塞不下的題組就跳過
-  let limitList = [];
-  let currentCount = 0;
-
-  for (let q of finalList) {
-    if (currentCount >= targetCount) break; // 滿了就不加了
-
-    // 檢查這題屬於哪個題組（或獨立）
-    const groupMatch = q.q.match(/【(\d+)~(\d+)題為題組題】/);
-    let blockSize = 1; // 預設是 1 題
+  // 2. 這時候 list 已經是一長串打亂且綁好題組的完美陣列了！
+  // 我們只需要從前面切出 targetCount 的數量。
+  if (list.length > targetCount) {
+    let cutList = [];
+    let currentCount = 0;
     
-    if (groupMatch) {
-      blockSize = parseInt(groupMatch[2]) - parseInt(groupMatch[1]) + 1;
-    } else {
-      // 如果他不是第一題，往前找所屬題組的總大小
-      for (let j = parseInt(q.n) - 1; j >= 1; j--) {
-        const prevQ = Q.find(item => item.y === q.y && item.n === j.toString());
-        if (prevQ && prevQ.q.includes(`【`) && prevQ.q.includes(`題為題組題】`)) {
-          const prevMatch = prevQ.q.match(/【(\d+)~(\d+)題為題組題】/);
-          if (parseInt(q.n) >= parseInt(prevMatch[1]) && parseInt(q.n) <= parseInt(prevMatch[2])) {
-            blockSize = parseInt(prevMatch[2]) - parseInt(prevMatch[1]) + 1;
+    // 3. 遍歷這個完美陣列，把題目加進去
+    for (let k = 0; k < list.length; k++) {
+      if (currentCount >= targetCount) break; // 額度滿了就停
+      
+      let q = list[k];
+      
+      // 判斷這題是不是題組的第一題
+      const groupMatch = q.q.match(/【(\d+)~(\d+)題為題組題】/);
+      let isMiddleOfGroup = false;
+      
+      // 如果它不是第一題，往前找它是不是屬於某個題組
+      if (!groupMatch) {
+        for (let j = parseInt(q.n) - 1; j >= 1; j--) {
+          const prevQ = Q.find(item => item.y === q.y && item.n === j.toString());
+          if (prevQ && prevQ.q.includes(`【`)) {
+            const prevMatch = prevQ.q.match(/【(\d+)~(\d+)題為題組題】/);
+            if (parseInt(q.n) >= parseInt(prevMatch[1]) && parseInt(q.n) <= parseInt(prevMatch[2])) {
+              isMiddleOfGroup = true;
+            }
+            break;
           }
-          break;
         }
       }
-    }
 
-    // 如果加上這題（或這整個題組）會超過題數，就跳過它！
-    if (currentCount + blockSize > targetCount) {
-      // 如果這題是題組的附屬題，我們直接跳過這個題組，不能只加一半
-      // 所以這裡直接 continue 即可
-      continue;
-    }
+      // 如果現在額度剩 1，但遇到題組的中間/最後一題，代表這個題組已經被切斷了
+      // 我們直接跳過剩下的部分，保證不留半個題組
+      if (isMiddleOfGroup && currentCount + 1 > targetCount) {
+        continue;
+      }
 
-    limitList.push(q);
-    currentCount++;
+      cutList.push(q);
+      currentCount++;
+    }
+    list = cutList;
   }
 
-  list = limitList;
+  // 4. 重設測驗狀態並顯示
   i = 0; 
   userAnswers = {}; 
   sessionStats = { total: list.length, correct: 0 };
   isReviewingWrong = false; 
+  currentPage = 'quiz';
   show();
 }
   
